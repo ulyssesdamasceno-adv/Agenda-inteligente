@@ -1,0 +1,1373 @@
+<title>Agenda Dr. Ulysses</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&display=swap">
+<style>
+/* Layout: faixa azul-marinho com a marca e a ação rápida; abaixo, coluna única em ritmo de pauta forense:
+   hora ou caixa de marcar à esquerda, assunto à direita, fios finos entre as linhas. */
+:root {
+  /* Marca: iguais nos dois temas, a faixa do topo é sempre azul-marinho */
+  --navy: #01204e;
+  --gold: #d9b05c;
+  --gold-hi: #f4dc94;
+  --gold-lo: #b78833;
+  --gold-line: rgba(217, 176, 92, .5);
+  --on-navy: #ffffff;
+  --on-gold: #081a3d;
+  /* Tema claro */
+  --bg: #f2f4f9;
+  --surface: #ffffff;
+  --ink: #0e1b36;
+  --muted: #55607b;
+  --line: #d3dae8;
+  --line-soft: #e3e8f1;
+  --action: #0f2f6b;
+  --on-action: #ffffff;
+  --accent-ink: #76540a;
+  --field: #ffffff;
+  --focus: #2f6bff;
+  --chip: #e5e9f2;
+  --chip-ink: #33415f;
+  --crit: #b3261e;
+  --crit-bg: #fde7e4;
+  --warn: #855000;
+  --warn-bg: #fcefd3;
+  --ok: #1b7046;
+  --ok-bg: #dff3e7;
+  --on-ok: #ffffff;
+  --shadow: 0 1px 2px rgba(8, 26, 61, .08), 0 10px 28px rgba(8, 26, 61, .10);
+  --font-display: "Cinzel", "Trajan Pro", Georgia, "Times New Roman", serif;
+  --font-text: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #06122b; --surface: #0c1e45; --ink: #eef2fa; --muted: #a2aec8; --line: #24376a; --line-soft: #182a55;
+    --action: #d9b05c; --on-action: #081a3d; --accent-ink: #e6c477; --field: #0a1a3d; --focus: #9dbcff;
+    --chip: #1b2e5e; --chip-ink: #cdd7ee; --crit: #ffa197; --crit-bg: #4a1613; --warn: #ffc874; --warn-bg: #3f2c07;
+    --ok: #7fdcaa; --ok-bg: #0f3626; --on-ok: #06122b;
+    --shadow: 0 1px 2px rgba(0, 0, 0, .4), 0 10px 28px rgba(0, 0, 0, .35);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #06122b; --surface: #0c1e45; --ink: #eef2fa; --muted: #a2aec8; --line: #24376a; --line-soft: #182a55;
+  --action: #d9b05c; --on-action: #081a3d; --accent-ink: #e6c477; --field: #0a1a3d; --focus: #9dbcff;
+  --chip: #1b2e5e; --chip-ink: #cdd7ee; --crit: #ffa197; --crit-bg: #4a1613; --warn: #ffc874; --warn-bg: #3f2c07;
+  --ok: #7fdcaa; --ok-bg: #0f3626; --on-ok: #06122b;
+  --shadow: 0 1px 2px rgba(0, 0, 0, .4), 0 10px 28px rgba(0, 0, 0, .35);
+  color-scheme: dark;
+}
+
+html { -webkit-text-size-adjust: 100%; }
+body { background: var(--bg); color: var(--ink); font-family: var(--font-text); font-size: 16px; line-height: 1.45; }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--navy); }
+*, *::before, *::after { box-sizing: border-box; }
+[hidden] { display: none !important; }
+button, input, select, textarea { font: inherit; color: inherit; }
+button { -webkit-tap-highlight-color: transparent; }
+:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+.wrap {
+  max-width: 720px; margin-inline: auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+
+/* ---------- faixa da marca ---------- */
+.mast { background: var(--navy); color: var(--on-navy); border-bottom: 1px solid var(--gold-line); }
+.mast-in { display: flex; flex-direction: column; align-items: center; gap: 14px; padding-block: 16px 16px; }
+.logo { display: block; width: min(214px, 58%); height: auto; }
+.quick {
+  width: 100%; max-width: 520px; min-height: 60px; padding: 10px 14px;
+  display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 12px;
+  border: 0; border-radius: 14px; cursor: pointer; text-align: left;
+  background: linear-gradient(135deg, var(--gold-hi), var(--gold) 52%, var(--gold-lo));
+  color: var(--on-gold);
+}
+.quick:focus-visible { outline-color: var(--on-navy); }
+.quick-mark { width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center; background: var(--navy); color: var(--gold-hi); }
+.quick-txt { display: grid; gap: 1px; min-width: 0; }
+.quick-title { font-size: 17px; font-weight: 700; letter-spacing: .01em; }
+.quick-sub { font-size: 13.5px; font-weight: 500; font-variant-numeric: tabular-nums; }
+.quick-chev { transition: transform .18s ease; }
+.quick[aria-expanded="true"] .quick-chev { transform: rotate(180deg); }
+.quick-panel {
+  width: 100%; max-width: 520px; padding: 12px 12px 4px;
+  background: var(--surface); color: var(--ink); border: 1px solid var(--line); border-radius: 14px;
+}
+.inline-form { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px; }
+.inline-form .btn { min-height: 48px; }
+
+/* ---------- data e abas ---------- */
+.dateline { padding-block: 18px 8px; }
+.dateline h1 {
+  margin: 0; font-family: var(--font-display); font-weight: 600; font-size: clamp(19px, 5.4vw, 27px);
+  line-height: 1.2; letter-spacing: .03em; text-wrap: balance;
+}
+.dateline p { margin: 6px 0 0; font-size: 13.5px; color: var(--muted); }
+.dateline .nota-dia { color: var(--accent-ink); font-weight: 600; }
+.dateline .sync.crit { color: var(--crit); font-weight: 600; }
+
+.tabs {
+  position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5;
+  display: flex; align-items: center; gap: 4px; padding-block: 8px;
+  background: var(--bg); border-bottom: 1px solid var(--line);
+}
+.tab {
+  flex: 1 1 0; min-width: 0; min-height: 44px; padding: 0 4px; border-radius: 10px;
+  display: grid; place-items: center; text-align: center; text-decoration: none;
+  font-size: 15px; font-weight: 600; color: var(--muted);
+}
+.tab[aria-current="page"] { background: var(--action); color: var(--on-action); }
+.tab-add {
+  flex: 0 0 44px; height: 44px; border-radius: 10px; border: 1.5px solid var(--action);
+  background: transparent; color: var(--action); display: grid; place-items: center; cursor: pointer;
+}
+
+.alerta {
+  margin-top: 12px; padding: 12px 12px 12px 14px; border-radius: 12px; background: var(--crit-bg); color: var(--crit);
+  display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px; align-items: start; font-weight: 600; font-size: 15px;
+  scroll-margin-top: calc(env(safe-area-inset-top, 0px) + 72px);
+}
+.alerta button { border: 0; background: transparent; color: inherit; font-weight: 700; min-height: 32px; padding: 0 6px; cursor: pointer; text-decoration: underline; }
+
+/* ---------- seções e linhas ---------- */
+.sec { margin-top: 24px; }
+.sec-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 34px; padding-bottom: 4px; border-bottom: 1px solid var(--line); }
+.sec-head h2 { margin: 0; font-size: 12.5px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+.sec-head .n { margin-left: 6px; letter-spacing: 0; font-variant-numeric: tabular-nums; color: var(--accent-ink); }
+.link-btn { border: 0; background: transparent; padding: 6px 0 6px 8px; min-height: 32px; font-size: 14px; font-weight: 600; color: var(--accent-ink); cursor: pointer; white-space: nowrap; }
+.rows { list-style: none; margin: 0; padding: 0; }
+.row { display: grid; grid-template-columns: 44px minmax(0, 1fr); align-items: start; border-bottom: 1px solid var(--line-soft); }
+.row.is-time { grid-template-columns: 58px minmax(0, 1fr); }
+.row.is-plain { grid-template-columns: minmax(0, 1fr) auto; align-items: center; }
+.check { width: 44px; height: 50px; padding: 0; border: 0; background: transparent; display: grid; place-items: center; cursor: pointer; }
+.check i { width: 24px; height: 24px; border: 2px solid var(--muted); border-radius: 50%; display: grid; place-items: center; }
+.prazo .check i { border-radius: 7px; }
+.check[aria-checked="true"] i { background: var(--ok); border-color: var(--ok); }
+.check[aria-checked="true"] i::after { content: ""; width: 10px; height: 5px; margin-top: -2px; border-left: 2.5px solid var(--on-ok); border-bottom: 2.5px solid var(--on-ok); transform: rotate(-45deg); }
+.check[disabled] { opacity: .5; }
+.row-main { display: block; width: 100%; min-height: 50px; padding: 13px 0 13px 2px; border: 0; background: transparent; text-align: left; cursor: pointer; }
+.row-main.as-text { cursor: default; }
+.row-title { display: block; font-size: 16px; line-height: 1.35; overflow-wrap: anywhere; }
+.row-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; margin-top: 5px; font-size: 13.5px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.done .row-title { text-decoration: line-through; color: var(--muted); }
+.hora { padding: 14px 6px 0 0; font-size: 15px; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--accent-ink); }
+.hora.sem-hora { padding-top: 15px; font-size: 11.5px; font-weight: 600; line-height: 1.15; color: var(--muted); }
+.chip { display: inline-flex; align-items: center; padding: 2px 9px; border-radius: 999px; background: var(--chip); color: var(--chip-ink); font-size: 12.5px; font-weight: 600; white-space: nowrap; }
+.chip.crit { background: var(--crit-bg); color: var(--crit); }
+.chip.warn { background: var(--warn-bg); color: var(--warn); }
+.chip.ok { background: var(--ok-bg); color: var(--ok); }
+.confirm-bar { grid-column: 1 / -1; display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; padding: 0 0 12px 46px; font-size: 14.5px; }
+.is-plain .confirm-bar { padding-left: 2px; }
+.confirm-bar span { flex: 1 1 180px; font-weight: 600; }
+.empty { margin: 0; padding: 14px 0; font-size: 15px; color: var(--muted); }
+.empty-crit { color: var(--crit); font-weight: 600; }
+.note { margin: 0; padding: 10px 0 0; font-size: 14px; color: var(--muted); }
+.sub-head { margin: 18px 0 0; padding-bottom: 6px; border-bottom: 1px solid var(--line-soft); font-size: 14.5px; font-weight: 700; }
+.sec-head h2 .day-tag { margin-left: 8px; letter-spacing: 0; text-transform: none; }
+
+/* ---------- painéis e formulários ---------- */
+.panel {
+  margin-top: 14px; padding: 16px; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; box-shadow: var(--shadow);
+  scroll-margin-top: calc(env(safe-area-inset-top, 0px) + 72px);
+}
+.panel-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
+.panel-head h2 { margin: 0; font-family: var(--font-display); font-size: 18px; font-weight: 600; letter-spacing: .03em; }
+.icon-btn { width: 40px; height: 40px; border: 0; border-radius: 10px; background: var(--chip); color: var(--chip-ink); display: grid; place-items: center; cursor: pointer; }
+.fields { display: grid; gap: 14px; margin-top: 14px; }
+.field { display: grid; gap: 6px; min-width: 0; }
+.field > label { font-size: 13px; font-weight: 600; color: var(--muted); }
+.opt { font-weight: 500; }
+.pair { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 12px; }
+.in {
+  display: block; width: 100%; min-width: 0; max-width: 100%; min-height: 48px; padding: 11px 12px;
+  border: 1px solid var(--line); border-radius: 10px; background-color: var(--field); color: var(--ink);
+  font-size: 16px; line-height: 1.3;
+}
+input.in[type="date"], input.in[type="time"] { -webkit-appearance: none; appearance: none; text-align: left; }
+input.in::-webkit-date-and-time-value { text-align: left; }
+select.in {
+  -webkit-appearance: none; appearance: none; padding-right: 38px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%237a859e' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 10px center; background-size: 18px;
+}
+textarea.in { min-height: 46vh; line-height: 1.5; resize: vertical; }
+.in::placeholder { color: var(--muted); }
+.in:disabled { opacity: .6; }
+.hint { margin: 0; font-size: 13px; color: var(--muted); }
+.seg { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); gap: 4px; padding: 4px; border-radius: 12px; background: var(--chip); }
+.seg label { position: relative; display: block; }
+.seg input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: pointer; }
+.seg span { display: grid; place-items: center; min-height: 40px; padding: 4px 6px; border-radius: 9px; text-align: center; font-size: 14.5px; font-weight: 600; line-height: 1.2; color: var(--chip-ink); }
+.seg input:checked + span { background: var(--surface); color: var(--ink); box-shadow: var(--shadow); }
+.seg input:focus-visible + span { outline: 3px solid var(--focus); outline-offset: 1px; }
+.checkline { display: grid; grid-template-columns: 24px minmax(0, 1fr); gap: 10px; align-items: start; font-size: 14.5px; cursor: pointer; }
+.checkline input { width: 22px; height: 22px; margin: 0; accent-color: var(--action); }
+.form-erro { margin: 14px 0 0; padding: 10px 12px; border-radius: 10px; background: var(--crit-bg); color: var(--crit); font-size: 14.5px; font-weight: 600; }
+.actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+.btn { min-height: 46px; padding: 0 16px; border: 1px solid transparent; border-radius: 10px; font-size: 15.5px; font-weight: 600; cursor: pointer; }
+.btn-primary { background: var(--action); color: var(--on-action); }
+.btn-ghost { background: transparent; border-color: var(--line); color: var(--ink); }
+.btn-danger { background: transparent; border-color: var(--crit); color: var(--crit); margin-left: auto; }
+.btn-small { min-height: 38px; padding: 0 12px; font-size: 14.5px; }
+.btn[disabled] { opacity: .55; cursor: default; }
+.confirm { margin-top: 14px; padding: 12px; border-radius: 12px; background: var(--crit-bg); }
+.confirm p { margin: 0; font-weight: 600; color: var(--crit); }
+.confirm .actions { margin-top: 10px; }
+.confirm .btn-danger { margin-left: 0; background: var(--crit); color: var(--surface); }
+
+/* ---------- resultado do cálculo ---------- */
+.calc-out { padding: 14px; border: 1px solid var(--line); border-radius: 12px; background: var(--bg); }
+.calc-wait { margin: 0; font-size: 14.5px; color: var(--muted); }
+.calc-label { margin: 0; font-size: 12px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+.calc-venc { margin: 4px 0 0; display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; font-family: var(--font-display); font-size: 19px; font-weight: 600; letter-spacing: .02em; line-height: 1.25; }
+.calc-venc .chip { font-family: var(--font-text); letter-spacing: 0; }
+.calc-steps { margin: 12px 0 0; padding-left: 20px; display: grid; gap: 6px; font-size: 14px; }
+.calc-avisos { list-style: none; margin: 12px 0 0; padding: 10px 12px; display: grid; gap: 8px; border-radius: 10px; background: var(--warn-bg); color: var(--warn); font-size: 14px; font-weight: 600; }
+.calc-out .hint { margin-top: 12px; }
+
+/* ---------- dobras ---------- */
+.fold { margin-top: 24px; border-top: 1px solid var(--line); }
+.fold + .fold { margin-top: 0; }
+.fold:last-of-type { border-bottom: 1px solid var(--line); }
+.fold summary { min-height: 48px; padding: 12px 0; display: flex; align-items: center; gap: 8px; font-weight: 600; cursor: pointer; list-style: none; }
+.fold summary::-webkit-details-marker { display: none; }
+.fold summary::after { content: ""; margin: 0 4px 4px auto; width: 9px; height: 9px; border-right: 2px solid var(--muted); border-bottom: 2px solid var(--muted); transform: rotate(45deg); transition: transform .18s ease; }
+.fold[open] summary::after { margin-bottom: -4px; transform: rotate(-135deg); }
+.fold summary .n { color: var(--muted); font-weight: 500; font-variant-numeric: tabular-nums; }
+.fold-body { padding-bottom: 16px; }
+.regras { margin: 0; padding-left: 20px; display: grid; gap: 8px; font-size: 14.5px; }
+.feriado-form { display: grid; grid-template-columns: minmax(0, 150px) minmax(0, 1fr) auto; gap: 8px; margin: 12px 0 4px; }
+.notas-bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 12px; margin-top: 10px; }
+.notas-bar p { margin: 0; font-size: 13.5px; color: var(--muted); }
+.notas-bar p.crit { color: var(--crit); font-weight: 600; }
+.fechar { margin-top: 28px; }
+.fechar-box { margin-top: 4px; }
+.view { padding-bottom: 56px; }
+
+.toast {
+  position: fixed; left: 50%; transform: translateX(-50%); z-index: 20;
+  bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+  width: max-content; max-width: min(calc(100vw - 32px), 440px); padding: 11px 18px; border-radius: 999px;
+  background: var(--ink); color: var(--bg); font-size: 14.5px; font-weight: 600; text-align: center; box-shadow: var(--shadow);
+}
+
+@media (max-width: 430px) {
+  .feriado-form { grid-template-columns: minmax(0, 1fr); }
+  .tab { font-size: 14.5px; }
+}
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; scroll-behavior: auto !important; } }
+</style>
+
+<header class="mast">
+  <div class="wrap mast-in">
+    <img class="logo" src="logo.webp" width="1000" height="615" alt="Ulysses Damasceno, Advogado">
+    <button type="button" class="quick" id="quick-btn" aria-expanded="false" aria-controls="quick-panel">
+      <span class="quick-mark" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>
+      <span class="quick-txt"><span class="quick-title">Tarefas de hoje</span><span class="quick-sub" id="quick-sub">Carregando…</span></span>
+      <svg class="quick-chev" aria-hidden="true" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+    </button>
+    <div class="quick-panel" id="quick-panel" hidden>
+      <form class="inline-form" id="quick-form" novalidate>
+        <label class="sr" for="quick-texto">Nova tarefa para hoje</label>
+        <input class="in" id="quick-texto" type="text" maxlength="300" autocomplete="off" enterkeyhint="done" placeholder="Nova tarefa para hoje">
+        <button type="submit" class="btn btn-primary" id="quick-salvar">Anotar</button>
+      </form>
+      <div id="quick-list"></div>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="dateline">
+    <h1 id="hoje-titulo">Agenda</h1>
+    <p class="nota-dia" id="hoje-nota" hidden></p>
+    <p class="sync" id="sync">Abrindo a agenda…</p>
+  </div>
+
+  <nav class="tabs" aria-label="Seções da agenda">
+    <a class="tab" href="#hoje" data-view="hoje" aria-current="page">Hoje</a>
+    <a class="tab" href="#semana" data-view="semana">Semana</a>
+    <a class="tab" href="#prazos" data-view="prazos">Prazos</a>
+    <a class="tab" href="#notas" data-view="notas">Notas</a>
+    <button type="button" class="tab-add" id="add-btn" aria-label="Anotar item novo"><svg aria-hidden="true" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button>
+  </nav>
+
+  <div class="alerta" id="alerta" role="alert" hidden><span id="alerta-texto"></span><button type="button" id="alerta-fechar">Fechar</button></div>
+
+  <section class="panel" id="compose" aria-labelledby="compose-titulo" hidden>
+    <div class="panel-head">
+      <h2 id="compose-titulo">Anotar</h2>
+      <button type="button" class="icon-btn" id="compose-fechar" aria-label="Fechar"><svg aria-hidden="true" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+    </div>
+    <form id="compose-form" novalidate>
+      <div class="seg" id="c-tipos" role="radiogroup" aria-label="O que anotar">
+        <label><input type="radio" name="c-tipo" id="c-tipo-tarefas" value="tarefas" checked><span>Tarefa</span></label>
+        <label><input type="radio" name="c-tipo" id="c-tipo-compromissos" value="compromissos"><span>Compromisso</span></label>
+        <label><input type="radio" name="c-tipo" id="c-tipo-prazos" value="prazos"><span>Prazo</span></label>
+      </div>
+
+      <div class="fields" id="f-tarefas">
+        <div class="field"><label for="c-t-texto">Tarefa</label><input class="in" id="c-t-texto" type="text" maxlength="300" autocomplete="off"></div>
+        <div class="field"><label for="c-t-data">Data</label><input class="in" id="c-t-data" type="date"></div>
+      </div>
+
+      <div class="fields" id="f-compromissos" hidden>
+        <div class="field"><label for="c-c-titulo">Compromisso</label><input class="in" id="c-c-titulo" type="text" maxlength="300" autocomplete="off"></div>
+        <div class="pair">
+          <div class="field"><label for="c-c-data">Data</label><input class="in" id="c-c-data" type="date"></div>
+          <div class="field"><label for="c-c-hora">Hora <span class="opt">(opcional)</span></label><input class="in" id="c-c-hora" type="time"></div>
+        </div>
+        <div class="field"><label for="c-c-local">Local <span class="opt">(opcional)</span></label><input class="in" id="c-c-local" type="text" maxlength="200" autocomplete="off"></div>
+      </div>
+
+      <div class="fields" id="f-prazos" hidden>
+        <div class="seg" id="c-p-modos" role="radiogroup" aria-label="Como definir o vencimento">
+          <label><input type="radio" name="c-p-modo" id="c-p-modo-calc" value="calc" checked><span>Calcular pela publicação</span></label>
+          <label><input type="radio" name="c-p-modo" id="c-p-modo-manual" value="manual"><span>Já sei o vencimento</span></label>
+        </div>
+        <div class="fields" id="f-prazo-calc">
+          <div class="field">
+            <label for="c-p-recurso">Recurso ou peça</label>
+            <select class="in" id="c-p-recurso"></select>
+            <p class="hint" id="c-p-base" hidden></p>
+          </div>
+          <div class="field" id="c-p-dias-campo" hidden><label for="c-p-dias">Prazo em dias</label><input class="in" id="c-p-dias" type="number" inputmode="numeric" min="1" max="365" step="1"></div>
+          <div class="field"><label for="c-p-ident" id="c-p-ident-rotulo">Processo ou cliente</label><input class="in" id="c-p-ident" type="text" maxlength="200" autocomplete="off"></div>
+          <div class="field"><label for="c-p-pub">Data informada</label><input class="in" id="c-p-pub" type="date"></div>
+          <div class="field">
+            <label for="c-p-tipodata">Essa data é</label>
+            <select class="in" id="c-p-tipodata">
+              <option value="publicacao">da publicação ou intimação</option>
+              <option value="disponibilizacao">da disponibilização no diário eletrônico</option>
+            </select>
+          </div>
+          <label class="checkline" for="c-p-excecao"><input type="checkbox" id="c-p-excecao"><span>Réu preso, Lei Maria da Penha ou medida urgente: o prazo corre de 20/12 a 20/01</span></label>
+          <div class="calc-out" id="c-p-out" aria-live="polite"></div>
+        </div>
+        <div class="fields" id="f-prazo-manual" hidden>
+          <div class="field"><label for="c-p-titulo">Prazo</label><input class="in" id="c-p-titulo" type="text" maxlength="300" autocomplete="off"></div>
+          <div class="field"><label for="c-p-data">Vencimento</label><input class="in" id="c-p-data" type="date"></div>
+        </div>
+      </div>
+
+      <p class="form-erro" id="compose-erro" role="alert" hidden></p>
+      <div class="actions">
+        <button type="submit" class="btn btn-primary" id="compose-salvar">Anotar tarefa</button>
+        <button type="button" class="btn btn-ghost" id="compose-cancelar">Cancelar</button>
+        <button type="button" class="btn btn-danger" id="compose-excluir" hidden>Excluir</button>
+      </div>
+      <div class="confirm" id="compose-confirma" hidden>
+        <p>Excluir este item da agenda? Não dá para desfazer.</p>
+        <div class="actions">
+          <button type="button" class="btn btn-danger" id="compose-excluir-sim">Excluir de vez</button>
+          <button type="button" class="btn btn-ghost" id="compose-excluir-nao">Manter</button>
+        </div>
+      </div>
+    </form>
+  </section>
+
+  <section class="view" id="view-hoje">
+    <div class="sec">
+      <div class="sec-head"><h2>Prazos próximos<span class="n" id="hoje-prazos-n"></span></h2><button type="button" class="link-btn" id="hoje-calc-btn">Calcular prazo</button></div>
+      <div id="hoje-prazos"></div>
+    </div>
+    <div class="sec">
+      <div class="sec-head"><h2>Compromissos de hoje<span class="n" id="hoje-comps-n"></span></h2><button type="button" class="link-btn" id="hoje-comp-btn" aria-label="Anotar compromisso">Anotar</button></div>
+      <div id="hoje-comps"></div>
+    </div>
+    <div class="sec">
+      <div class="sec-head"><h2>Tarefas de hoje e pendentes<span class="n" id="hoje-tarefas-n"></span></h2><button type="button" class="link-btn" id="hoje-tarefa-btn" aria-label="Anotar tarefa">Anotar</button></div>
+      <div id="hoje-tarefas"></div>
+    </div>
+    <div class="fechar">
+      <button type="button" class="btn btn-ghost" id="fechar-btn" aria-expanded="false" aria-controls="fechar-box">Fechar o dia</button>
+      <div class="fechar-box" id="fechar-box"></div>
+    </div>
+  </section>
+
+  <section class="view" id="view-semana" hidden>
+    <div id="semana-box"></div>
+  </section>
+
+  <section class="view" id="view-prazos" hidden>
+    <div class="sec">
+      <div class="sec-head"><h2>Prazos em aberto<span class="n" id="prazos-n"></span></h2><button type="button" class="link-btn" id="prazos-calc-btn">Calcular prazo</button></div>
+      <div id="prazos-abertos"></div>
+    </div>
+    <details class="fold">
+      <summary>Prazos cumpridos <span class="n" id="prazos-feitos-n"></span></summary>
+      <div class="fold-body" id="prazos-feitos"></div>
+    </details>
+    <details class="fold">
+      <summary>Dias sem expediente no tribunal <span class="n" id="feriados-n"></span></summary>
+      <div class="fold-body">
+        <p class="hint">Feriados estaduais e municipais, pontos facultativos (Carnaval, Corpus Christi) e suspensões de expediente. O cálculo passa a pular esses dias no início e no vencimento do prazo.</p>
+        <form class="feriado-form" id="feriado-form" novalidate>
+          <div class="field"><label class="sr" for="feriado-data">Data sem expediente</label><input class="in" id="feriado-data" type="date"></div>
+          <div class="field"><label class="sr" for="feriado-desc">Motivo</label><input class="in" id="feriado-desc" type="text" maxlength="120" autocomplete="off" placeholder="Motivo (ex.: feriado estadual)"></div>
+          <button type="submit" class="btn btn-primary" id="feriado-salvar">Cadastrar</button>
+        </form>
+        <p class="form-erro" id="feriado-erro" role="alert" hidden></p>
+        <div id="feriados-lista"></div>
+      </div>
+    </details>
+    <details class="fold">
+      <summary>Como o prazo é contado</summary>
+      <div class="fold-body">
+        <ul class="regras">
+          <li>Dias corridos, sem contar o dia da publicação ou intimação e contando o do vencimento (CPP, art. 798, §§ 1º e 5º).</li>
+          <li>A contagem começa no primeiro dia útil seguinte à publicação (Súmula 310 do STF). Se a data informada for a da disponibilização no diário eletrônico, a publicação é o dia útil seguinte (Lei 11.419/06, art. 4º, §§ 3º e 4º).</li>
+          <li>Vencimento em sábado, domingo, feriado ou dia sem expediente passa para o primeiro dia útil seguinte (CPP, art. 798, § 3º).</li>
+          <li>De 20/12 a 20/01 os prazos ficam suspensos (CPP, art. 798-A). A suspensão não vale para réu preso, Lei Maria da Penha e medidas urgentes: nesses casos o recesso forense, de 20/12 a 06/01, só adia o início e o vencimento.</li>
+          <li>Entram na conta sábados, domingos, feriados nacionais, Sexta-feira Santa, o recesso forense e os dias cadastrados em “Dias sem expediente”. Carnaval, Corpus Christi e feriados locais só entram se forem cadastrados.</li>
+        </ul>
+      </div>
+    </details>
+  </section>
+
+  <section class="view" id="view-notas" hidden>
+    <div class="sec">
+      <div class="sec-head"><h2>Notas</h2></div>
+      <div class="field" style="margin-top:12px">
+        <label class="sr" for="notas-texto">Notas</label>
+        <textarea class="in" id="notas-texto" maxlength="200000" placeholder="Carregando as notas…" disabled></textarea>
+      </div>
+      <div class="notas-bar">
+        <p id="notas-status">Carregando as notas…</p>
+        <button type="button" class="btn btn-primary" id="notas-salvar" disabled>Salvar notas</button>
+      </div>
+    </div>
+  </section>
+</main>
+
+<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+
+<script id="calc">
+/* Contagem de prazos processuais penais. Bloco puro, sem DOM: a página e os testes em Node usam este mesmo código. */
+(function (root) {
+  "use strict";
+  var MS = 86400000;
+  var DIAS = ["domingo", "segunda-feira", "terça-feira", "quarta-feira", "quinta-feira", "sexta-feira", "sábado"];
+  var DIAS_C = ["dom.", "seg.", "ter.", "qua.", "qui.", "sex.", "sáb."];
+  var MESES = ["janeiro", "fevereiro", "março", "abril", "maio", "junho", "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"];
+
+  function pad(n) { return String(n).padStart(2, "0"); }
+  function isoOf(y, m, d) { return String(y).padStart(4, "0") + "-" + pad(m) + "-" + pad(d); }
+  function toUTC(iso) { var p = iso.split("-"); return Date.UTC(+p[0], +p[1] - 1, +p[2]); }
+  function fromUTC(t) { var d = new Date(t); return isoOf(d.getUTCFullYear(), d.getUTCMonth() + 1, d.getUTCDate()); }
+  function isISO(s) { return typeof s === "string" && /^\d{4}-\d{2}-\d{2}$/.test(s) && fromUTC(toUTC(s)) === s; }
+  function addDias(iso, n) { return fromUTC(toUTC(iso) + n * MS); }
+  function diffDias(a, b) { return Math.round((toUTC(a) - toUTC(b)) / MS); }
+  function diaSemana(iso) { return new Date(toUTC(iso)).getUTCDay(); }
+  function hojeISO(agora) { var n = agora || new Date(); return isoOf(n.getFullYear(), n.getMonth() + 1, n.getDate()); }
+
+  function fmtData(iso) { var p = iso.split("-"); return p[2] + "/" + p[1] + "/" + p[0]; }
+  function fmtDiaMes(iso) { var p = iso.split("-"); return p[2] + "/" + p[1]; }
+  function fmtCurta(iso) { return DIAS_C[diaSemana(iso)] + " " + fmtData(iso); }
+  function fmtDia(iso) { return DIAS_C[diaSemana(iso)] + " " + fmtDiaMes(iso); }
+  function fmtLonga(iso) { var p = iso.split("-"); return DIAS[diaSemana(iso)] + ", " + (+p[2]) + " de " + MESES[+p[1] - 1]; }
+  function plural(n, um, varios) { return n + " " + (n === 1 ? um : (varios || um + "s")); }
+
+  /* Páscoa pelo algoritmo gregoriano anônimo (Meeus/Jones/Butcher). */
+  function pascoa(ano) {
+    var a = ano % 19, b = Math.floor(ano / 100), c = ano % 100, d = Math.floor(b / 4), e = b % 4,
+      f = Math.floor((b + 8) / 25), g = Math.floor((b - f + 1) / 3), h = (19 * a + b - d - g + 15) % 30,
+      i = Math.floor(c / 4), k = c % 4, l = (32 + 2 * e + 2 * i - h - k) % 7,
+      m = Math.floor((a + 11 * h + 22 * l) / 451), x = h + l - 7 * m + 114;
+    return isoOf(ano, Math.floor(x / 31), (x % 31) + 1);
+  }
+
+  var FIXOS = {
+    "01-01": "Confraternização Universal", "04-21": "Tiradentes", "05-01": "Dia do Trabalho",
+    "09-07": "Independência", "10-12": "Nossa Senhora Aparecida", "11-02": "Finados",
+    "11-15": "Proclamação da República", "11-20": "Consciência Negra", "12-25": "Natal"
+  };
+  function feriadoNacional(iso) {
+    var fixo = FIXOS[iso.slice(5)];
+    if (fixo) return fixo;
+    return iso === addDias(pascoa(+iso.slice(0, 4)), -2) ? "Sexta-feira Santa" : null;
+  }
+
+  /* Dias em que o foro costuma fechar, mas que não são feriado nacional: não entram na conta, só geram aviso. */
+  function costume(iso) {
+    var p = pascoa(+iso.slice(0, 4)), md = iso.slice(5);
+    if (iso === addDias(p, -48)) return "segunda-feira de Carnaval";
+    if (iso === addDias(p, -47)) return "terça-feira de Carnaval";
+    if (iso === addDias(p, -46)) return "Quarta-feira de Cinzas";
+    if (iso === addDias(p, -4)) return "Quarta-feira Santa";
+    if (iso === addDias(p, -3)) return "Quinta-feira Santa";
+    if (iso === addDias(p, 60)) return "Corpus Christi";
+    if (md === "08-11") return "11 de agosto";
+    if (md === "10-28") return "Dia do Servidor Público";
+    if (md === "11-01") return "Dia de Todos os Santos";
+    if (md === "12-08") return "Dia da Justiça";
+    return null;
+  }
+
+  function noRecesso(iso) { var md = iso.slice(5); return md >= "12-20" || md <= "01-06"; }
+  function naSuspensao(iso) { var md = iso.slice(5); return md >= "12-20" || md <= "01-20"; }
+
+  /* extras: objeto { "AAAA-MM-DD": "motivo" } com os dias sem expediente cadastrados na agenda. */
+  function motivoSemExpediente(iso, extras) {
+    var dow = diaSemana(iso);
+    if (dow === 6) return "sábado";
+    if (dow === 0) return "domingo";
+    var f = feriadoNacional(iso);
+    if (f) return "feriado: " + f;
+    if (noRecesso(iso)) return "recesso forense";
+    if (extras && Object.prototype.hasOwnProperty.call(extras, iso)) return "sem expediente" + (extras[iso] ? ": " + extras[iso] : "");
+    return null;
+  }
+
+  /* Dias sem expediente estritamente entre duas datas, descritos para a memória de cálculo. */
+  function descreverPulo(de, ate, extras) {
+    var partes = [], recesso = false, d = addDias(de, 1), m;
+    while (d < ate) {
+      if (noRecesso(d)) recesso = true;
+      else {
+        m = motivoSemExpediente(d, extras);
+        if (m) partes.push(m === "sábado" || m === "domingo" ? fmtDia(d) : fmtDia(d) + ", " + m);
+      }
+      d = addDias(d, 1);
+    }
+    if (recesso) partes.push("recesso forense de 20/12 a 06/01");
+    return partes;
+  }
+  function temRecesso(de, ate) { for (var d = de; d < ate; d = addDias(d, 1)) if (noRecesso(d)) return true; return false; }
+
+  /*
+   * o = { data, tipoData: "publicacao" | "disponibilizacao", dias, excecao, extras }
+   * excecao: réu preso, Lei Maria da Penha ou medida urgente (CPP, art. 798-A, I a III).
+   */
+  function calcular(o) {
+    o = o || {};
+    var data = o.data, dias = Math.floor(Number(o.dias)), excecao = !!o.excecao, extras = o.extras || {};
+    if (!isISO(data)) return { erro: "Informe a data da publicação ou intimação." };
+    if (!(dias >= 1 && dias <= 365)) return { erro: "Informe o prazo em dias, de 1 a 365." };
+
+    function util(iso) { return !motivoSemExpediente(iso, extras); }
+    function proximoUtil(iso) { var d = addDias(iso, 1); while (!util(d)) d = addDias(d, 1); return d; }
+    function caminho(partes) { return partes.length ? " Sem expediente no caminho: " + partes.join("; ") + "." : ""; }
+
+    var passos = [], avisos = [], publicacao = data, m;
+
+    if (o.tipoData === "disponibilizacao") {
+      publicacao = proximoUtil(data);
+      passos.push("Disponibilização no diário em " + fmtCurta(data) + ". A publicação é o primeiro dia útil seguinte: " + fmtCurta(publicacao) + "." + caminho(descreverPulo(data, publicacao, extras)));
+      m = costume(publicacao);
+      if (m) avisos.push("A publicação foi considerada em " + fmtCurta(publicacao) + ", " + m + ". Se o tribunal não tiver expediente nesse dia, cadastre a data em “Dias sem expediente”.");
+    } else {
+      passos.push("Publicação ou intimação em " + fmtCurta(data) + ". Esse dia não entra na contagem.");
+      m = motivoSemExpediente(data, extras);
+      if (m) avisos.push("A data informada, " + fmtCurta(data) + ", não é dia útil (" + m + "). Confira se é mesmo a data da publicação ou intimação.");
+    }
+
+    var inicio = proximoUtil(publicacao);
+    if (!excecao && naSuspensao(inicio)) {
+      while (naSuspensao(inicio) || !util(inicio)) inicio = addDias(inicio, 1);
+      passos.push("De 20/12 a 20/01 os prazos ficam suspensos (CPP, art. 798-A). A contagem começa em " + fmtCurta(inicio) + ", primeiro dia útil depois da suspensão.");
+    } else {
+      passos.push("A contagem começa em " + fmtCurta(inicio) + ", primeiro dia útil seguinte." + caminho(descreverPulo(publicacao, inicio, extras)));
+    }
+
+    var ultimo = inicio, contados = 1, suspensos = 0;
+    while (contados < dias) {
+      ultimo = addDias(ultimo, 1);
+      if (!excecao && naSuspensao(ultimo)) { suspensos++; continue; }
+      contados++;
+    }
+    passos.push(plural(dias, "dia corrido", "dias corridos") + " a partir de " + fmtCurta(inicio) + ": o último é " + fmtCurta(ultimo) + "." +
+      (suspensos ? " Os dias de 20/12 a 20/01 não foram contados (CPP, art. 798-A)." : ""));
+
+    var vencimento = ultimo;
+    while (!util(vencimento) || (!excecao && naSuspensao(vencimento))) vencimento = addDias(vencimento, 1);
+    if (vencimento !== ultimo) {
+      passos.push("O último dia, " + fmtCurta(ultimo) + ", não é dia útil (" + motivoSemExpediente(ultimo, extras) + "). O prazo passa para o primeiro dia útil seguinte (CPP, art. 798, § 3º): " + fmtCurta(vencimento) + "." +
+        (!excecao && naSuspensao(addDias(vencimento, -1)) ? " A prorrogação atravessa a suspensão de 20/12 a 20/01 (CPP, art. 798-A)." : ""));
+    }
+
+    if (excecao && (temRecesso(addDias(publicacao, 1), inicio) || temRecesso(ultimo, vencimento))) {
+      avisos.push("Com réu preso o prazo corre no recesso. Aqui o recesso forense, de 20/12 a 06/01, foi tratado como período sem expediente, que só adia o início e o vencimento. Confirme com o tribunal.");
+    }
+    m = costume(inicio);
+    if (m) avisos.push("A contagem começa em " + fmtCurta(inicio) + ", " + m + ". Se o tribunal não tiver expediente nesse dia, cadastre a data em “Dias sem expediente” e o vencimento se ajusta.");
+    m = costume(vencimento);
+    if (m) avisos.push("O vencimento cai em " + fmtCurta(vencimento) + ", " + m + ". Se o tribunal não tiver expediente nesse dia, cadastre a data em “Dias sem expediente” e o vencimento se ajusta.");
+
+    return { publicacao: publicacao, inicio: inicio, ultimo: ultimo, vencimento: vencimento, dias: dias, excecao: excecao, passos: passos, avisos: avisos };
+  }
+
+  function restante(vencimento, hoje) {
+    var n = diffDias(vencimento, hoje);
+    if (n > 1) return { n: n, texto: "faltam " + n + " dias", curto: "faltam " + n + " dias", nivel: n <= 3 ? "warn" : "" };
+    if (n === 1) return { n: n, texto: "vence amanhã", curto: "amanhã", nivel: "warn" };
+    if (n === 0) return { n: n, texto: "vence hoje", curto: "hoje", nivel: "crit" };
+    return { n: n, texto: n === -1 ? "venceu ontem" : "venceu há " + (-n) + " dias", curto: n === -1 ? "atrasado desde ontem" : "atrasado há " + (-n) + " dias", nivel: "crit" };
+  }
+
+  var RECURSOS = [
+    { grupo: "Recursos", itens: [
+      { id: "apelacao", nome: "Apelação", rotulo: "Apelação: interposição", dias: 5, base: "CPP, art. 593" },
+      { id: "apelacao-razoes", nome: "Razões de apelação", rotulo: "Apelação: razões", dias: 8, base: "CPP, art. 600", nota: "Em contravenção o prazo é de 3 dias." },
+      { id: "apelacao-juizado", nome: "Apelação (Juizado)", rotulo: "Apelação no Juizado Especial Criminal", dias: 10, base: "Lei 9.099/95, art. 82, § 1º", nota: "Interposição já com as razões." },
+      { id: "rese", nome: "Recurso em sentido estrito", rotulo: "Recurso em sentido estrito: interposição", dias: 5, base: "CPP, art. 586" },
+      { id: "rese-razoes", nome: "Razões de recurso em sentido estrito", rotulo: "Recurso em sentido estrito: razões", dias: 2, base: "CPP, art. 588" },
+      { id: "agravo-execucao", nome: "Agravo em execução", dias: 5, base: "LEP, art. 197; Súmula 700 do STF" },
+      { id: "embargos-declaracao", nome: "Embargos de declaração", dias: 2, base: "CPP, arts. 382 e 619", nota: "Vale também no STJ (RISTJ, art. 263)." },
+      { id: "embargos-declaracao-juizado", nome: "Embargos de declaração (Juizado)", rotulo: "Embargos de declaração no Juizado", dias: 5, base: "Lei 9.099/95, art. 83, § 1º" },
+      { id: "embargos-declaracao-stf", nome: "Embargos de declaração (STF)", rotulo: "Embargos de declaração no STF", dias: 5, base: "RISTF, art. 337, § 1º" },
+      { id: "embargos-infringentes", nome: "Embargos infringentes e de nulidade", dias: 10, base: "CPP, art. 609, parágrafo único" },
+      { id: "carta-testemunhavel", nome: "Carta testemunhável", dias: 2, base: "CPP, art. 640", nota: "O prazo legal é de 48 horas, contado aqui como 2 dias. Se a intimação registrar a hora, ele pode terminar antes." },
+      { id: "rhc", nome: "Recurso ordinário em habeas corpus", dias: 5, base: "Lei 8.038/90, art. 30; RISTF, art. 310" },
+      { id: "rms", nome: "Recurso ordinário em mandado de segurança", dias: 15, base: "Lei 8.038/90, art. 33" },
+      { id: "resp", nome: "Recurso especial", dias: 15, base: "CPC, art. 1.003, § 5º" },
+      { id: "re", nome: "Recurso extraordinário", dias: 15, base: "CPC, art. 1.003, § 5º" },
+      { id: "aresp", nome: "Agravo em recurso especial ou extraordinário", dias: 15, base: "CPC, arts. 1.042 e 1.003, § 5º" },
+      { id: "agravo-regimental", nome: "Agravo regimental", rotulo: "Agravo regimental em matéria penal (STJ e STF)", dias: 5, base: "Lei 8.038/90, art. 39", nota: "Nos tribunais locais, confira o regimento interno." },
+      { id: "embargos-divergencia", nome: "Embargos de divergência", dias: 15, base: "CPC, arts. 1.043 e 1.003, § 5º" }
+    ] },
+    { grupo: "Defesa e contrarrazões", itens: [
+      { id: "resposta-acusacao", nome: "Resposta à acusação", dias: 10, base: "CPP, arts. 396 e 406" },
+      { id: "defesa-previa-drogas", nome: "Defesa prévia (Lei de Drogas)", dias: 10, base: "Lei 11.343/06, art. 55" },
+      { id: "defesa-preliminar-funcional", nome: "Defesa preliminar (crime funcional)", dias: 15, base: "CPP, art. 514" },
+      { id: "memoriais", nome: "Alegações finais por memoriais", dias: 5, base: "CPP, art. 403, § 3º" },
+      { id: "juri-422", nome: "Júri: rol de testemunhas e diligências", dias: 5, base: "CPP, art. 422" },
+      { id: "contrarrazoes-apelacao", nome: "Contrarrazões de apelação", dias: 8, base: "CPP, art. 600", nota: "Em contravenção o prazo é de 3 dias." },
+      { id: "contrarrazoes-rese", nome: "Contrarrazões de RESE ou de agravo em execução", dias: 2, base: "CPP, art. 588" },
+      { id: "contrarrazoes-resp", nome: "Contrarrazões de recurso especial ou extraordinário", dias: 15, base: "CPC, art. 1.030" }
+    ] }
+  ];
+  function achar(id) {
+    for (var g = 0; g < RECURSOS.length; g++) for (var i = 0; i < RECURSOS[g].itens.length; i++) if (RECURSOS[g].itens[i].id === id) return RECURSOS[g].itens[i];
+    return null;
+  }
+  function tituloPrazo(nome, ident, publicacao, dias) {
+    return (nome ? nome + " — " : "") + ident + " · publ. " + fmtData(publicacao) + " · " + plural(dias, "dia");
+  }
+
+  root.Prazos = {
+    isISO: isISO, addDias: addDias, diffDias: diffDias, diaSemana: diaSemana, hojeISO: hojeISO,
+    fmtData: fmtData, fmtDiaMes: fmtDiaMes, fmtCurta: fmtCurta, fmtDia: fmtDia, fmtLonga: fmtLonga, plural: plural,
+    pascoa: pascoa, feriadoNacional: feriadoNacional, costume: costume, noRecesso: noRecesso, naSuspensao: naSuspensao,
+    motivoSemExpediente: motivoSemExpediente, calcular: calcular, restante: restante,
+    RECURSOS: RECURSOS, achar: achar, tituloPrazo: tituloPrazo
+  };
+})(typeof globalThis !== "undefined" ? globalThis : this);
+</script>
+
+<script>
+(function () {
+  "use strict";
+  var P = window.Prazos;
+  var VIEWS = ["hoje", "semana", "prazos", "notas"];
+  var NOME = { tarefas: "tarefa", compromissos: "compromisso", prazos: "prazo" };
+  var PRINCIPAIS = ["tarefasPend", "tarefasFeitas", "compromissos", "prazosAbertos"];
+
+  var S = {
+    hoje: P.hojeISO(), view: "hoje", db: null, semDados: false, atrasou: false, timerCarga: 0, lidoEm: null,
+    tarefasPend: new Map(), tarefasFeitas: new Map(), compromissos: new Map(),
+    prazosAbertos: new Map(), prazosFeitos: new Map(), feriados: new Map(),
+    visto: {}, confirmado: {}, erroLeitura: {},
+    ocupado: new Set(), edit: null, fechando: false, confirmaPrazo: "", confirmaFeriado: ""
+  };
+  var N = { sujo: false, salvando: false, timer: 0, remoto: false, salvo: "", salvoEm: null, erro: "" };
+
+  function $(id) { return document.getElementById(id); }
+  function str(x) { return typeof x === "string" ? x : x == null ? "" : String(x); }
+  function val(id) { return $(id).value.trim(); }
+  function cap(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
+  function hhmm(d) { return d ? String(d.getHours()).padStart(2, "0") + ":" + String(d.getMinutes()).padStart(2, "0") : ""; }
+  function cmpTexto(a, b) { return a.localeCompare(b, "pt-BR"); }
+  function porData(a, b) { var x = a.data || "", y = b.data || ""; return x < y ? -1 : x > y ? 1 : 0; }
+  function porHora(a, b) { var x = a.hora || "99:99", y = b.hora || "99:99"; return x < y ? -1 : x > y ? 1 : cmpTexto(a.titulo, b.titulo); }
+
+  /* Monta elementos sem innerHTML: todo texto da agenda entra como texto puro. */
+  function h(tag, attrs) {
+    var el = document.createElement(tag), k, v, i, c;
+    for (k in attrs || {}) {
+      v = attrs[k];
+      if (v == null || v === false) continue;
+      if (k === "class") el.className = v;
+      else if (k === "text") el.textContent = v;
+      else if (k.slice(0, 2) === "on") el.addEventListener(k.slice(2), v);
+      else el.setAttribute(k, v === true ? "" : v);
+    }
+    for (i = 2; i < arguments.length; i++) {
+      c = arguments[i];
+      if (Array.isArray(c)) c.forEach(function (x) { if (x != null && x !== false) el.append(x); });
+      else if (c != null && c !== false) el.append(c);
+    }
+    return el;
+  }
+  function chip(texto, nivel) { return h("span", { class: "chip" + (nivel ? " " + nivel : ""), text: texto }); }
+  function quando(iso) {
+    var n = P.diffDias(iso, S.hoje);
+    if (n === 0) return "hoje";
+    if (n === 1) return "amanhã";
+    return iso.slice(0, 4) === S.hoje.slice(0, 4) ? P.fmtDia(iso) : P.fmtCurta(iso);
+  }
+
+  /* ---------- leitura ---------- */
+  function mapaDe(mapa) {
+    return function (snap) {
+      mapa.clear();
+      snap.docs.forEach(function (d) { var v = d.data(); if (v) mapa.set(d.id, v); });
+    };
+  }
+  function assinar(nome, ref, aplicar) {
+    ref.onSnapshot(function (snap) {
+      try { aplicar(snap); } catch (e) { S.erroLeitura[nome] = "invalid_argument"; }
+      S.visto[nome] = true;
+      if (!snap.metadata || snap.metadata.fromCache === false) { S.confirmado[nome] = true; S.lidoEm = new Date(); }
+      conferirCarga();
+      pedirRender();
+    }, function (e) {
+      S.erroLeitura[nome] = (e && e.code) || "unavailable";
+      conferirCarga();
+      pedirRender();
+    });
+  }
+  function assinarTudo() {
+    var db = S.db;
+    S.timerCarga = setTimeout(function () { S.atrasou = true; pedirRender(); }, 10000);
+    assinar("tarefasPend", db.collection("tarefas").where("feita", "==", false), mapaDe(S.tarefasPend));
+    assinar("tarefasFeitas", db.collection("tarefas").where("feitaEm", ">=", P.addDias(S.hoje, -7)), mapaDe(S.tarefasFeitas));
+    assinar("compromissos", db.collection("compromissos").where("data", ">=", S.hoje), mapaDe(S.compromissos));
+    assinar("prazosAbertos", db.collection("prazos").where("feito", "==", false), mapaDe(S.prazosAbertos));
+    assinar("prazosFeitos", db.collection("prazos").where("feito", "==", true).orderBy("data", "desc").limit(30), mapaDe(S.prazosFeitos));
+    assinar("feriados", db.collection("feriados"), mapaDe(S.feriados));
+    assinar("notas", db.doc("notas/texto"), aplicarNotas);
+  }
+  function conferirCarga() {
+    var nomes = PRINCIPAIS.concat(["prazosFeitos", "feriados", "notas"]);
+    if (nomes.every(function (n) { return S.confirmado[n] || S.erroLeitura[n]; })) { clearTimeout(S.timerCarga); S.atrasou = false; }
+  }
+  function situacao(nomes) {
+    if (S.semDados) return "sem";
+    if (nomes.every(function (n) { return S.visto[n]; })) return "ok";
+    if (nomes.some(function (n) { return S.erroLeitura[n]; })) return "erro";
+    return S.atrasou ? "atraso" : "carregando";
+  }
+  function avisoCarga(sit, oque) {
+    var t = sit === "sem" ? "Sem acesso aos dados: não foi possível ler " + oque + "."
+      : sit === "erro" ? "Não consegui ler " + oque + ". Não confie nesta lista agora."
+      : sit === "atraso" ? "A agenda ainda não respondeu: não consegui ler " + oque + "."
+      : "Carregando " + oque + "…";
+    return h("p", { class: "empty" + (sit === "carregando" ? "" : " empty-crit"), text: t });
+  }
+
+  /* ---------- listas ---------- */
+  function listaTarefas() {
+    var m = new Map(), out = [];
+    S.tarefasFeitas.forEach(function (v, id) { m.set(id, v); });
+    S.tarefasPend.forEach(function (v, id) { m.set(id, v); });
+    m.forEach(function (v, id) {
+      out.push({ id: id, texto: str(v.texto), data: P.isISO(v.data) ? v.data : "", feita: v.feita === true, feitaEm: P.isISO(v.feitaEm) ? v.feitaEm : "" });
+    });
+    return out;
+  }
+  function listaCompromissos() {
+    var out = [];
+    S.compromissos.forEach(function (v, id) {
+      out.push({ id: id, titulo: str(v.titulo), data: P.isISO(v.data) ? v.data : "", hora: /^\d{2}:\d{2}$/.test(str(v.hora)) ? v.hora : "", local: str(v.local) });
+    });
+    return out;
+  }
+  function listaPrazos(mapa) {
+    var out = [];
+    mapa.forEach(function (v, id) { out.push({ id: id, titulo: str(v.titulo), data: P.isISO(v.data) ? v.data : "", feito: v.feito === true }); });
+    return out;
+  }
+  function extras() {
+    var o = {};
+    S.feriados.forEach(function (v) { if (P.isISO(v.data)) o[v.data] = str(v.descricao); });
+    return o;
+  }
+  function tarefasDeHoje() {
+    var todas = listaTarefas(), hoje = S.hoje;
+    return {
+      pend: todas.filter(function (t) { return !t.feita && (!t.data || t.data <= hoje); }).sort(function (a, b) { return porData(a, b) || cmpTexto(a.texto, b.texto); }),
+      feitas: todas.filter(function (t) { return t.feita && (t.feitaEm === hoje || t.data === hoje); }).sort(function (a, b) { return cmpTexto(a.texto, b.texto); })
+    };
+  }
+
+  /* ---------- gravação ---------- */
+  function mensagemErro(e) {
+    var c = e && e.code;
+    if (c === "invalid_argument" || c === "transform_error") return "A agenda recusou a gravação. Nada foi gravado; confira se você está na sua conta.";
+    if (c === "resource_exhausted") return "Muitas gravações em pouco tempo. Nada foi gravado; espere um instante e tente de novo.";
+    if (c === "quota_exceeded") return "A agenda está cheia. Nada foi gravado; exclua itens antigos para abrir espaço.";
+    if (c === "revoked" || c === "not_granted" || c === "capability_disabled" || c === "capability_removed") return "Esta página perdeu o acesso aos dados. Nada foi gravado; feche e abra a agenda de novo.";
+    return "Não consegui falar com os dados da agenda. Nada foi gravado; tente de novo.";
+  }
+  function tentar(op) {
+    return Promise.resolve().then(op).catch(function (e) {
+      if (e && e.code === "unavailable") return new Promise(function (r) { setTimeout(r, 500 + Math.random() * 700); }).then(op);
+      throw e;
+    });
+  }
+  /* Uma gravação por vez em cada documento. Devolve true se gravou. */
+  function gravar(caminho, op, okMsg) {
+    if (!S.db) {
+      alerta(S.semDados ? "Sem acesso aos dados da agenda. Nada foi gravado." : "A agenda ainda está abrindo. Nada foi gravado; tente de novo em instantes.");
+      return Promise.resolve(false);
+    }
+    if (S.ocupado.has(caminho)) return Promise.resolve(false);
+    S.ocupado.add(caminho);
+    pedirRender();
+    return tentar(op).then(function () {
+      $("alerta").hidden = true;
+      if (okMsg) toast(okMsg);
+      return true;
+    }, function (e) {
+      alerta(mensagemErro(e));
+      return false;
+    }).then(function (deu) {
+      S.ocupado.delete(caminho);
+      pedirRender();
+      return deu;
+    });
+  }
+  function alerta(msg) {
+    $("alerta-texto").textContent = msg;
+    $("alerta").hidden = false;
+    $("alerta").scrollIntoView({ block: "nearest" });
+  }
+  var toastTimer = 0;
+  function toast(msg) {
+    var t = $("toast");
+    t.textContent = msg;
+    t.hidden = false;
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () { t.hidden = true; }, 3600);
+  }
+
+  function alternarTarefa(t) {
+    var caminho = "tarefas/" + t.id, feita = !t.feita;
+    gravar(caminho, function () { return S.db.doc(caminho).update({ feita: feita, feitaEm: feita ? S.hoje : "" }); }, feita ? "Tarefa marcada como feita." : "Tarefa reaberta.");
+  }
+  function tocarPrazo(p) {
+    var caminho = "prazos/" + p.id;
+    if (p.feito) { gravar(caminho, function () { return S.db.doc(caminho).update({ feito: false }); }, "Prazo reaberto."); return; }
+    S.confirmaPrazo = S.confirmaPrazo === p.id ? "" : p.id;
+    pedirRender();
+  }
+  function cumprirPrazo(p) {
+    var caminho = "prazos/" + p.id;
+    S.confirmaPrazo = "";
+    gravar(caminho, function () { return S.db.doc(caminho).update({ feito: true }); }, "Prazo marcado como cumprido.");
+  }
+
+  /* ---------- linhas ---------- */
+  function linhaTarefa(t) {
+    var caminho = "tarefas/" + t.id, meta = [];
+    if (!t.feita && !t.data) meta.push(chip("sem data", "warn"));
+    else if (!t.feita && t.data < S.hoje) meta.push(chip("desde " + P.fmtDiaMes(t.data), "warn"));
+    if (t.feita && t.feitaEm) meta.push(h("span", { text: t.feitaEm === S.hoje ? "feita hoje" : "feita em " + P.fmtDiaMes(t.feitaEm) }));
+    return h("li", { class: "row" + (t.feita ? " done" : "") },
+      h("button", {
+        type: "button", class: "check", role: "checkbox", "aria-checked": String(t.feita), disabled: S.ocupado.has(caminho),
+        "aria-label": (t.feita ? "Reabrir a tarefa: " : "Marcar como feita: ") + t.texto, onclick: function () { alternarTarefa(t); }
+      }, h("i")),
+      h("button", { type: "button", class: "row-main", onclick: function () { abrirEdicao("tarefas", t.id); } },
+        h("span", { class: "row-title", text: t.texto || "(sem texto)" }),
+        meta.length ? h("span", { class: "row-meta" }, meta) : null));
+  }
+  function linhaCompromisso(c) {
+    return h("li", { class: "row is-time" },
+      h("span", { class: "hora" + (c.hora ? "" : " sem-hora"), text: c.hora || "sem hora" }),
+      h("button", { type: "button", class: "row-main", onclick: function () { abrirEdicao("compromissos", c.id); } },
+        h("span", { class: "row-title", text: c.titulo || "(sem título)" }),
+        c.local ? h("span", { class: "row-meta" }, h("span", { text: c.local })) : null));
+  }
+  function linhaPrazo(p) {
+    var caminho = "prazos/" + p.id, r = p.data ? P.restante(p.data, S.hoje) : null, meta = [];
+    if (p.data) meta.push(h("span", { text: (p.feito ? "vencimento " : "vence ") + P.fmtCurta(p.data) }));
+    meta.push(p.feito ? chip("cumprido", "ok") : r ? chip(r.curto, r.nivel) : chip("sem data", "crit"));
+    var li = h("li", { class: "row prazo" + (p.feito ? " done" : "") },
+      h("button", {
+        type: "button", class: "check", role: "checkbox", "aria-checked": String(p.feito), disabled: S.ocupado.has(caminho),
+        "aria-label": (p.feito ? "Reabrir o prazo: " : "Marcar como cumprido: ") + p.titulo, onclick: function () { tocarPrazo(p); }
+      }, h("i")),
+      h("button", { type: "button", class: "row-main", onclick: function () { abrirEdicao("prazos", p.id); } },
+        h("span", { class: "row-title", text: p.titulo || "(sem título)" }),
+        h("span", { class: "row-meta" }, meta)));
+    if (S.confirmaPrazo === p.id && !p.feito) {
+      li.append(h("div", { class: "confirm-bar" },
+        h("span", { text: "Marcar este prazo como cumprido?" }),
+        h("button", { type: "button", class: "btn btn-primary btn-small", text: "Cumprido", onclick: function () { cumprirPrazo(p); } }),
+        h("button", { type: "button", class: "btn btn-ghost btn-small", text: "Voltar", onclick: function () { S.confirmaPrazo = ""; pedirRender(); } })));
+    }
+    return li;
+  }
+  function listaOuVazio(linhas, vazio) {
+    return linhas.length ? h("ul", { class: "rows" }, linhas) : h("p", { class: "empty", text: vazio });
+  }
+
+  /* ---------- topo ---------- */
+  function renderTopo() {
+    var hoje = S.hoje, nota = "", f = P.feriadoNacional(hoje), ex = extras(), sync, crit = false;
+    $("hoje-titulo").textContent = cap(P.fmtLonga(hoje));
+    if (f) nota = "Feriado nacional: " + f + ".";
+    else if (Object.prototype.hasOwnProperty.call(ex, hoje)) nota = "Sem expediente no tribunal" + (ex[hoje] ? ": " + ex[hoje] : "") + ".";
+    if (P.naSuspensao(hoje)) nota += (nota ? " " : "") + "Prazos penais suspensos até 20/01 (CPP, art. 798-A), salvo réu preso, Lei Maria da Penha e medidas urgentes.";
+    $("hoje-nota").textContent = nota;
+    $("hoje-nota").hidden = !nota;
+
+    if (S.semDados) { sync = "Sem acesso aos dados da agenda. Abra a página pelo claude.ai, com a sua conta."; crit = true; }
+    else if (!S.db) sync = "Abrindo a agenda…";
+    else if (PRINCIPAIS.some(function (n) { return S.erroLeitura[n]; })) { sync = "Não consegui ler parte dos dados da agenda. Feche e abra a página de novo."; crit = true; }
+    else if (PRINCIPAIS.every(function (n) { return S.confirmado[n]; })) sync = "Agenda atualizada às " + hhmm(S.lidoEm) + ".";
+    else if (S.atrasou) { sync = PRINCIPAIS.every(function (n) { return S.visto[n]; }) ? "A agenda não respondeu. O que aparece pode estar desatualizado." : "Ainda não consegui ler os dados da agenda. Confira a conexão."; crit = true; }
+    else sync = "Carregando a agenda…";
+    $("sync").textContent = sync;
+    $("sync").className = "sync" + (crit ? " crit" : "");
+  }
+
+  function renderQuick() {
+    var sit = situacao(["tarefasPend", "tarefasFeitas"]), box = $("quick-list"), sub = $("quick-sub");
+    box.replaceChildren();
+    if (sit !== "ok") {
+      sub.textContent = sit === "carregando" ? "Carregando…" : "Não consegui ler as tarefas";
+      box.append(avisoCarga(sit, "as tarefas"));
+      return;
+    }
+    var t = tarefasDeHoje(), np = t.pend.length, nf = t.feitas.length;
+    sub.textContent = !np && !nf ? "Nenhuma tarefa para hoje"
+      : !np ? "Tudo feito: " + P.plural(nf, "tarefa")
+      : P.plural(np, "pendente") + (nf ? " · " + P.plural(nf, "feita") : "");
+    box.append(listaOuVazio(t.pend.concat(t.feitas).map(linhaTarefa), "Nenhuma tarefa para hoje. Escreva a primeira no campo acima."));
+  }
+
+  /* ---------- Hoje ---------- */
+  function renderHoje() {
+    var hoje = S.hoje, limite = P.addDias(hoje, 7), box, sit;
+
+    box = $("hoje-prazos"); box.replaceChildren(); $("hoje-prazos-n").textContent = "";
+    sit = situacao(["prazosAbertos"]);
+    if (sit !== "ok") box.append(avisoCarga(sit, "os prazos"));
+    else {
+      var abertos = listaPrazos(S.prazosAbertos).sort(porData);
+      var prox = abertos.filter(function (p) { return !p.data || p.data <= limite; });
+      var depois = abertos.filter(function (p) { return p.data && p.data > limite; });
+      if (prox.length) $("hoje-prazos-n").textContent = prox.length;
+      box.append(listaOuVazio(prox.map(linhaPrazo), "Nenhum prazo em aberto vence nos próximos 7 dias."));
+      if (depois.length) {
+        box.append(h("p", { class: "note", text: (prox.length ? "Depois disso: " : "O próximo: ") + depois[0].titulo + ", que vence " + P.fmtCurta(depois[0].data) +
+          (depois.length > 1 ? " (e mais " + (depois.length - 1) + " em aberto)" : "") + "." }));
+      }
+    }
+
+    box = $("hoje-comps"); box.replaceChildren(); $("hoje-comps-n").textContent = "";
+    sit = situacao(["compromissos"]);
+    if (sit !== "ok") box.append(avisoCarga(sit, "os compromissos"));
+    else {
+      var comps = listaCompromissos().filter(function (c) { return c.data === hoje; }).sort(porHora);
+      if (comps.length) $("hoje-comps-n").textContent = comps.length;
+      box.append(listaOuVazio(comps.map(linhaCompromisso), "Nenhum compromisso hoje."));
+    }
+
+    box = $("hoje-tarefas"); box.replaceChildren(); $("hoje-tarefas-n").textContent = "";
+    sit = situacao(["tarefasPend", "tarefasFeitas"]);
+    if (sit !== "ok") box.append(avisoCarga(sit, "as tarefas"));
+    else {
+      var t = tarefasDeHoje();
+      if (t.pend.length) $("hoje-tarefas-n").textContent = t.pend.length;
+      box.append(listaOuVazio(t.pend.concat(t.feitas).map(linhaTarefa), "Nenhuma tarefa para hoje. Use “Tarefas de hoje”, no topo, para anotar a primeira."));
+    }
+    renderFechamento();
+  }
+
+  function renderFechamento() {
+    var box = $("fechar-box"), btn = $("fechar-btn");
+    box.replaceChildren();
+    btn.setAttribute("aria-expanded", String(S.fechando));
+    btn.textContent = S.fechando ? "Ocultar o fechamento" : "Fechar o dia";
+    if (!S.fechando) return;
+    var sit = situacao(PRINCIPAIS);
+    if (sit !== "ok") { box.append(avisoCarga(sit, "a agenda")); return; }
+    var hoje = S.hoje, amanha = P.addDias(hoje, 1), tarefas = listaTarefas(), abertos = listaPrazos(S.prazosAbertos);
+    var feito = listaPrazos(S.prazosFeitos).filter(function (p) { return p.data === hoje; }).map(linhaPrazo)
+      .concat(tarefas.filter(function (t) { return t.feita && t.feitaEm === hoje; }).map(linhaTarefa));
+    var pend = abertos.filter(function (p) { return !p.data || p.data <= hoje; }).sort(porData).map(linhaPrazo)
+      .concat(tarefas.filter(function (t) { return !t.feita && (!t.data || t.data <= hoje); }).sort(porData).map(linhaTarefa));
+    var am = abertos.filter(function (p) { return p.data === amanha; }).map(linhaPrazo)
+      .concat(listaCompromissos().filter(function (c) { return c.data === amanha; }).sort(porHora).map(linhaCompromisso))
+      .concat(tarefas.filter(function (t) { return t.data === amanha; }).map(linhaTarefa));
+    box.append(
+      h("h3", { class: "sub-head", text: "Feito hoje" }), listaOuVazio(feito, "Nada marcado como feito hoje."),
+      h("h3", { class: "sub-head", text: "Ficou pendente" }), listaOuVazio(pend, "Nada ficou pendente."),
+      h("h3", { class: "sub-head", text: "Amanhã, " + P.fmtLonga(amanha) }), listaOuVazio(am, "Nada marcado para amanhã."));
+  }
+
+  /* ---------- Semana ---------- */
+  function blocoDia(titulo, tag, linhas, vazio) {
+    return h("div", { class: "sec" },
+      h("div", { class: "sec-head" }, h("h2", null, titulo, tag ? h("span", { class: "chip day-tag", text: tag }) : null)),
+      listaOuVazio(linhas, vazio));
+  }
+  function renderSemana() {
+    var box = $("semana-box");
+    box.replaceChildren();
+    var sit = situacao(PRINCIPAIS);
+    if (sit !== "ok") { box.append(avisoCarga(sit, "a semana")); return; }
+    var hoje = S.hoje, tarefas = listaTarefas(), comps = listaCompromissos(), prazos = listaPrazos(S.prazosAbertos), ex = extras();
+    var atraso = prazos.filter(function (p) { return !p.data || p.data < hoje; }).sort(porData).map(linhaPrazo)
+      .concat(tarefas.filter(function (t) { return !t.feita && (!t.data || t.data < hoje); }).sort(porData).map(linhaTarefa));
+    if (atraso.length) box.append(blocoDia("Em atraso", "", atraso, ""));
+    for (var i = 0; i < 7; i++) {
+      var dia = P.addDias(hoje, i), m = P.motivoSemExpediente(dia, ex);
+      var linhas = prazos.filter(function (p) { return p.data === dia; }).map(linhaPrazo)
+        .concat(comps.filter(function (c) { return c.data === dia; }).sort(porHora).map(linhaCompromisso))
+        .concat(tarefas.filter(function (t) { return t.data === dia; }).sort(function (a, b) { return (a.feita - b.feita) || cmpTexto(a.texto, b.texto); }).map(linhaTarefa));
+      box.append(blocoDia((i === 0 ? "Hoje · " : i === 1 ? "Amanhã · " : "") + P.fmtLonga(dia), m && m !== "sábado" && m !== "domingo" ? m : "", linhas, "Nada marcado."));
+    }
+  }
+
+  /* ---------- Prazos ---------- */
+  function renderPrazos() {
+    var box = $("prazos-abertos"), sit = situacao(["prazosAbertos"]);
+    box.replaceChildren(); $("prazos-n").textContent = "";
+    if (sit !== "ok") box.append(avisoCarga(sit, "os prazos"));
+    else {
+      var abertos = listaPrazos(S.prazosAbertos).sort(porData);
+      if (abertos.length) $("prazos-n").textContent = abertos.length;
+      box.append(listaOuVazio(abertos.map(linhaPrazo), "Nenhum prazo em aberto. Use “Calcular prazo” para gravar o primeiro a partir da publicação."));
+    }
+    var feitos = listaPrazos(S.prazosFeitos).sort(function (a, b) { return -porData(a, b); });
+    $("prazos-feitos-n").textContent = S.visto.prazosFeitos ? "(" + (feitos.length === 30 ? "30 mais recentes" : feitos.length) + ")" : "";
+    $("prazos-feitos").replaceChildren(S.visto.prazosFeitos ? listaOuVazio(feitos.map(linhaPrazo), "Nenhum prazo cumprido ainda.") : avisoCarga(situacao(["prazosFeitos"]), "os prazos cumpridos"));
+    renderFeriados();
+  }
+  function renderFeriados() {
+    var box = $("feriados-lista"), itens = [];
+    box.replaceChildren();
+    if (!S.visto.feriados) { $("feriados-n").textContent = ""; box.append(avisoCarga(situacao(["feriados"]), "os dias sem expediente")); return; }
+    S.feriados.forEach(function (v, id) { if (P.isISO(v.data)) itens.push({ id: id, data: v.data, descricao: str(v.descricao) }); });
+    itens.sort(porData);
+    $("feriados-n").textContent = "(" + itens.length + ")";
+    box.append(listaOuVazio(itens.map(function (f) {
+      var caminho = "feriados/" + f.id;
+      var li = h("li", { class: "row is-plain" },
+        h("span", { class: "row-main as-text" }, h("span", { class: "row-title", text: P.fmtCurta(f.data) + (f.descricao ? " · " + f.descricao : "") })),
+        h("button", { type: "button", class: "link-btn", text: "Excluir", onclick: function () { S.confirmaFeriado = S.confirmaFeriado === f.id ? "" : f.id; pedirRender(); } }));
+      if (S.confirmaFeriado === f.id) {
+        li.append(h("div", { class: "confirm-bar" },
+          h("span", { text: "Excluir este dia? Os prazos já gravados não mudam." }),
+          h("button", { type: "button", class: "btn btn-primary btn-small", text: "Excluir", onclick: function () { S.confirmaFeriado = ""; gravar(caminho, function () { return S.db.doc(caminho).delete(); }, "Dia excluído."); } }),
+          h("button", { type: "button", class: "btn btn-ghost btn-small", text: "Manter", onclick: function () { S.confirmaFeriado = ""; pedirRender(); } })));
+      }
+      return li;
+    }), "Nenhum dia cadastrado."));
+  }
+
+  /* ---------- Notas ---------- */
+  function aplicarNotas(snap) {
+    var campo = $("notas-texto"), texto = snap.exists ? str((snap.data() || {}).texto) : "";
+    if (snap.metadata && snap.metadata.hasPendingWrites) return;
+    if (!N.sujo && !N.salvando) {
+      if (campo.value !== texto) campo.value = texto;
+      N.salvo = texto;
+      N.remoto = false;
+    } else if (texto !== N.salvo && texto !== campo.value) N.remoto = true;
+  }
+  function renderNotas() {
+    var campo = $("notas-texto"), st = $("notas-status"), pronto = !!S.visto.notas && !!S.db, sit = situacao(["notas"]), t, crit = false;
+    campo.disabled = !pronto;
+    campo.placeholder = pronto ? "Escreva aqui. As notas são gravadas na agenda." : "Carregando as notas…";
+    $("notas-salvar").disabled = !pronto || N.salvando || !N.sujo;
+    if (!pronto) { t = sit === "carregando" ? "Carregando as notas…" : "Não consegui ler as notas."; crit = sit !== "carregando"; }
+    else if (N.erro) { t = N.erro; crit = true; }
+    else if (N.salvando) t = "Gravando…";
+    else if (N.remoto) { t = "As notas mudaram em outro lugar. Ao salvar, o texto daqui substitui o de lá."; crit = true; }
+    else if (N.sujo) t = "Alterações ainda não gravadas.";
+    else t = N.salvoEm ? "Notas gravadas às " + hhmm(N.salvoEm) + "." : "Notas em dia.";
+    st.textContent = t;
+    st.className = crit ? "crit" : "";
+  }
+  function salvarNotas() {
+    clearTimeout(N.timer);
+    if (!S.db || !S.visto.notas || N.salvando || !N.sujo) return;
+    var texto = $("notas-texto").value;
+    N.salvando = true; N.erro = "";
+    renderNotas();
+    tentar(function () { return S.db.doc("notas/texto").set({ texto: texto }); }).then(function () {
+      N.salvo = texto; N.salvoEm = new Date(); N.remoto = false;
+      N.sujo = $("notas-texto").value !== texto;
+    }, function (e) { N.erro = mensagemErro(e); }).then(function () {
+      N.salvando = false;
+      renderNotas();
+      if (N.sujo && !N.erro) N.timer = setTimeout(salvarNotas, 1500);
+    });
+  }
+
+  /* ---------- painel Anotar / Editar ---------- */
+  function tipoMarcado() { return document.querySelector('input[name="c-tipo"]:checked').value; }
+  function erroCompose(msg) { $("compose-erro").textContent = msg || ""; $("compose-erro").hidden = !msg; }
+  function lerCalc() {
+    var id = $("c-p-recurso").value, rec = P.achar(id);
+    return {
+      vazio: !id, outro: id === "outro", rec: rec, dias: rec ? rec.dias : Math.floor(Number($("c-p-dias").value)),
+      data: $("c-p-pub").value, tipoData: $("c-p-tipodata").value, excecao: $("c-p-excecao").checked, ident: val("c-p-ident")
+    };
+  }
+  function atualizarCalc() {
+    var out = $("c-p-out"), c = lerCalc(), base = $("c-p-base");
+    out.replaceChildren();
+    $("c-p-dias-campo").hidden = !c.outro;
+    $("c-p-ident-rotulo").textContent = c.outro ? "O que é o prazo, com processo ou cliente" : "Processo ou cliente";
+    base.textContent = c.rec ? "Base: " + c.rec.base + "." + (c.rec.nota ? " " + c.rec.nota : "") : "";
+    base.hidden = !c.rec;
+    if (c.vazio || !P.isISO(c.data) || !(c.dias >= 1)) {
+      out.append(h("p", { class: "calc-wait", text: "Escolha o recurso e informe a data para ver o vencimento." }));
+      return null;
+    }
+    var r = P.calcular({ data: c.data, tipoData: c.tipoData, dias: c.dias, excecao: c.excecao, extras: extras() });
+    if (r.erro) { out.append(h("p", { class: "calc-wait", text: r.erro })); return null; }
+    var rest = P.restante(r.vencimento, S.hoje);
+    out.append(
+      h("p", { class: "calc-label", text: "Vencimento" }),
+      h("p", { class: "calc-venc" }, h("span", { text: P.fmtLonga(r.vencimento) + " de " + r.vencimento.slice(0, 4) }), chip(rest.texto, rest.nivel)),
+      h("ol", { class: "calc-steps" }, r.passos.map(function (t) { return h("li", { text: t }); })));
+    if (r.avisos.length) out.append(h("ul", { class: "calc-avisos" }, r.avisos.map(function (t) { return h("li", { text: t }); })));
+    out.append(h("p", { class: "hint", text: "Feriados locais e pontos facultativos só entram se estiverem em “Dias sem expediente”, na aba Prazos." }));
+    return r;
+  }
+  function ajustarCompose() {
+    var editando = !!S.edit, col = editando ? S.edit.col : tipoMarcado(), manual = editando || $("c-p-modo-manual").checked;
+    $("c-tipos").hidden = editando;
+    $("f-tarefas").hidden = col !== "tarefas";
+    $("f-compromissos").hidden = col !== "compromissos";
+    $("f-prazos").hidden = col !== "prazos";
+    $("c-p-modos").hidden = editando;
+    $("f-prazo-calc").hidden = manual;
+    $("f-prazo-manual").hidden = !manual;
+    $("compose-titulo").textContent = editando ? "Editar " + NOME[col] : "Anotar";
+    $("compose-salvar").textContent = editando ? "Salvar alterações" : col === "tarefas" ? "Anotar tarefa" : col === "compromissos" ? "Anotar compromisso" : "Gravar prazo";
+    $("compose-excluir").hidden = !editando;
+    $("compose-confirma").hidden = true;
+    erroCompose("");
+    if (col === "prazos" && !manual) atualizarCalc();
+  }
+  function mostrarCompose(foco) {
+    var painel = $("compose");
+    painel.hidden = false;
+    if (foco) $(foco).focus({ preventScroll: true });
+    painel.scrollIntoView({ block: "start", behavior: "smooth" });
+  }
+  function fecharCompose() { $("compose").hidden = true; S.edit = null; }
+  function abrirNovo(col, modo) {
+    S.edit = null;
+    $("compose-form").reset();
+    $("c-tipo-" + col).checked = true;
+    if (modo) $("c-p-modo-" + modo).checked = true;
+    $("c-t-data").value = S.hoje;
+    $("c-c-data").value = S.hoje;
+    ajustarCompose();
+    mostrarCompose(col === "tarefas" ? "c-t-texto" : col === "compromissos" ? "c-c-titulo" : null);
+  }
+  function abrirEdicao(col, id) {
+    var v = col === "tarefas" ? (S.tarefasPend.get(id) || S.tarefasFeitas.get(id))
+      : col === "compromissos" ? S.compromissos.get(id)
+      : (S.prazosAbertos.get(id) || S.prazosFeitos.get(id));
+    if (!v) { alerta("Este item não está mais na agenda."); return; }
+    S.edit = { col: col, id: id };
+    $("compose-form").reset();
+    if (col === "tarefas") { $("c-t-texto").value = str(v.texto); $("c-t-data").value = P.isISO(v.data) ? v.data : ""; }
+    else if (col === "compromissos") {
+      $("c-c-titulo").value = str(v.titulo); $("c-c-data").value = P.isISO(v.data) ? v.data : "";
+      $("c-c-hora").value = /^\d{2}:\d{2}$/.test(str(v.hora)) ? v.hora : ""; $("c-c-local").value = str(v.local);
+    } else { $("c-p-titulo").value = str(v.titulo); $("c-p-data").value = P.isISO(v.data) ? v.data : ""; }
+    ajustarCompose();
+    mostrarCompose(null);
+  }
+  function enviarCompose(ev) {
+    ev.preventDefault();
+    var editando = !!S.edit, col = editando ? S.edit.col : tipoMarcado(), dados = null, erro = "", ok = "";
+    if (col === "tarefas") {
+      dados = { texto: val("c-t-texto"), data: val("c-t-data") };
+      if (!dados.texto) erro = "Escreva a tarefa.";
+      else if (!P.isISO(dados.data)) erro = "Informe a data da tarefa.";
+      else ok = "Tarefa anotada para " + quando(dados.data) + ".";
+    } else if (col === "compromissos") {
+      dados = { titulo: val("c-c-titulo"), data: val("c-c-data"), hora: val("c-c-hora").slice(0, 5), local: val("c-c-local") };
+      if (!dados.titulo) erro = "Escreva o compromisso.";
+      else if (!P.isISO(dados.data)) erro = "Informe a data do compromisso.";
+      else if (dados.hora && !/^\d{2}:\d{2}$/.test(dados.hora)) erro = "Hora inválida. Use HH:MM ou deixe em branco.";
+      else ok = "Compromisso anotado para " + quando(dados.data) + (dados.hora ? ", às " + dados.hora : "") + ".";
+    } else if (!editando && $("c-p-modo-calc").checked) {
+      var c = lerCalc(), r;
+      if (c.vazio) erro = "Escolha o recurso ou a peça.";
+      else if (c.outro && !(c.dias >= 1 && c.dias <= 365)) erro = "Informe o prazo em dias, de 1 a 365.";
+      else if (!c.ident) erro = c.outro ? "Escreva o que é o prazo, com o processo ou o cliente." : "Informe o processo ou o cliente.";
+      else if (!P.isISO(c.data)) erro = "Informe a data da publicação ou intimação.";
+      else {
+        r = P.calcular({ data: c.data, tipoData: c.tipoData, dias: c.dias, excecao: c.excecao, extras: extras() });
+        if (r.erro) erro = r.erro;
+        else {
+          dados = { titulo: P.tituloPrazo(c.rec ? c.rec.nome : "", c.ident, r.publicacao, r.dias), data: r.vencimento };
+          ok = "Prazo gravado: vence " + P.fmtCurta(r.vencimento) + ".";
+        }
+      }
+    } else {
+      dados = { titulo: val("c-p-titulo"), data: val("c-p-data") };
+      if (!dados.titulo) erro = "Escreva o prazo.";
+      else if (!P.isISO(dados.data)) erro = "Informe o vencimento.";
+      else ok = "Prazo gravado: vence " + P.fmtCurta(dados.data) + ".";
+    }
+    if (erro) { erroCompose(erro); return; }
+    erroCompose("");
+
+    var btn = $("compose-salvar"), feito;
+    btn.disabled = true;
+    if (editando) {
+      var caminho = S.edit.col + "/" + S.edit.id;
+      feito = gravar(caminho, function () { return S.db.doc(caminho).update(dados); }, "Alterações salvas.");
+    } else {
+      if (col === "tarefas") { dados.feita = false; dados.feitaEm = ""; }
+      if (col === "prazos") dados.feito = false;
+      var ref = S.db ? S.db.collection(col).doc() : null;
+      feito = gravar(col + "/novo", function () { return ref.set(dados); }, ok);
+    }
+    feito.then(function (deu) {
+      btn.disabled = false;
+      if (!deu) return;
+      fecharCompose();
+      if (!editando && col === "prazos") irPara("prazos");
+    });
+  }
+  function excluirEditado() {
+    if (!S.edit) return;
+    var caminho = S.edit.col + "/" + S.edit.id;
+    gravar(caminho, function () { return S.db.doc(caminho).delete(); }, "Item excluído.").then(function (deu) { if (deu) fecharCompose(); });
+  }
+
+  /* ---------- navegação e render ---------- */
+  function lerHash() { var v = (location.hash || "").replace("#", ""); return VIEWS.indexOf(v) >= 0 ? v : "hoje"; }
+  function mostrar(view) {
+    S.view = view;
+    VIEWS.forEach(function (v) { $("view-" + v).hidden = v !== view; });
+    document.querySelectorAll(".tab").forEach(function (a) {
+      if (a.getAttribute("data-view") === view) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current");
+    });
+    render();
+  }
+  function irPara(view) {
+    mostrar(view);
+    try { if (location.hash !== "#" + view) location.hash = view; } catch (e) { /* sem hash, a aba troca do mesmo jeito */ }
+  }
+  var renderPendente = false;
+  function pedirRender() {
+    if (renderPendente) return;
+    renderPendente = true;
+    setTimeout(function () { renderPendente = false; render(); }, 0);
+  }
+  function render() {
+    renderTopo();
+    renderQuick();
+    if (S.view === "hoje") renderHoje();
+    else if (S.view === "semana") renderSemana();
+    else if (S.view === "prazos") renderPrazos();
+    else renderNotas();
+    if (!$("compose").hidden && !S.edit && tipoMarcado() === "prazos" && $("c-p-modo-calc").checked) atualizarCalc();
+  }
+  function conferirDia() {
+    var agora = P.hojeISO();
+    if (agora !== S.hoje) { S.hoje = agora; pedirRender(); }
+  }
+
+  /* ---------- início ---------- */
+  function montarRecursos() {
+    var sel = $("c-p-recurso");
+    sel.append(h("option", { value: "", text: "Escolha o recurso ou a peça" }));
+    P.RECURSOS.forEach(function (g) {
+      sel.append(h("optgroup", { label: g.grupo }, g.itens.map(function (r) {
+        return h("option", { value: r.id, text: (r.rotulo || r.nome) + " · " + P.plural(r.dias, "dia") });
+      })));
+    });
+    sel.append(h("option", { value: "outro", text: "Outro prazo (informar os dias)" }));
+  }
+  function ligarEventos() {
+    $("quick-btn").addEventListener("click", function () {
+      var abrir = $("quick-panel").hidden;
+      $("quick-panel").hidden = !abrir;
+      this.setAttribute("aria-expanded", String(abrir));
+    });
+    $("quick-form").addEventListener("submit", function (ev) {
+      ev.preventDefault();
+      var campo = $("quick-texto"), texto = campo.value.trim(), btn = $("quick-salvar");
+      if (!texto) { campo.focus(); return; }
+      var ref = S.db ? S.db.collection("tarefas").doc() : null;
+      btn.disabled = true;
+      gravar("tarefas/novo", function () { return ref.set({ texto: texto, data: S.hoje, feita: false, feitaEm: "" }); }, "Tarefa anotada para hoje.").then(function (deu) {
+        btn.disabled = false;
+        if (deu) campo.value = "";
+      });
+    });
+    document.querySelectorAll(".tab").forEach(function (a) {
+      a.addEventListener("click", function (ev) { ev.preventDefault(); irPara(a.getAttribute("data-view")); });
+    });
+    window.addEventListener("hashchange", function () { var v = lerHash(); if (v !== S.view) mostrar(v); });
+    $("add-btn").addEventListener("click", function () { abrirNovo(S.view === "prazos" ? "prazos" : "tarefas"); });
+    $("hoje-calc-btn").addEventListener("click", function () { abrirNovo("prazos", "calc"); });
+    $("prazos-calc-btn").addEventListener("click", function () { abrirNovo("prazos", "calc"); });
+    $("hoje-comp-btn").addEventListener("click", function () { abrirNovo("compromissos"); });
+    $("hoje-tarefa-btn").addEventListener("click", function () { abrirNovo("tarefas"); });
+    $("alerta-fechar").addEventListener("click", function () { $("alerta").hidden = true; });
+    $("fechar-btn").addEventListener("click", function () { S.fechando = !S.fechando; renderFechamento(); });
+
+    $("compose-form").addEventListener("submit", enviarCompose);
+    $("compose-fechar").addEventListener("click", fecharCompose);
+    $("compose-cancelar").addEventListener("click", fecharCompose);
+    $("compose-excluir").addEventListener("click", function () { $("compose-confirma").hidden = false; $("compose-excluir-sim").focus(); });
+    $("compose-excluir-nao").addEventListener("click", function () { $("compose-confirma").hidden = true; });
+    $("compose-excluir-sim").addEventListener("click", excluirEditado);
+    document.querySelectorAll('input[name="c-tipo"], input[name="c-p-modo"]').forEach(function (r) { r.addEventListener("change", ajustarCompose); });
+    ["c-p-recurso", "c-p-dias", "c-p-pub", "c-p-tipodata", "c-p-excecao"].forEach(function (id) {
+      $(id).addEventListener("input", atualizarCalc);
+      $(id).addEventListener("change", atualizarCalc);
+    });
+
+    $("feriado-form").addEventListener("submit", function (ev) {
+      ev.preventDefault();
+      var data = val("feriado-data"), descricao = val("feriado-desc"), erro = $("feriado-erro"), btn = $("feriado-salvar"), msg = "";
+      if (!P.isISO(data)) msg = "Informe a data sem expediente.";
+      else if (Object.prototype.hasOwnProperty.call(extras(), data)) msg = "Esse dia já está cadastrado.";
+      erro.textContent = msg; erro.hidden = !msg;
+      if (msg) return;
+      var ref = S.db ? S.db.collection("feriados").doc() : null;
+      btn.disabled = true;
+      gravar("feriados/novo", function () { return ref.set({ data: data, descricao: descricao }); }, "Dia sem expediente cadastrado.").then(function (deu) {
+        btn.disabled = false;
+        if (deu) $("feriado-form").reset();
+      });
+    });
+
+    $("notas-texto").addEventListener("input", function () {
+      N.sujo = true; N.erro = "";
+      renderNotas();
+      clearTimeout(N.timer);
+      N.timer = setTimeout(salvarNotas, 1500);
+    });
+    $("notas-texto").addEventListener("blur", salvarNotas);
+    $("notas-salvar").addEventListener("click", salvarNotas);
+
+    setInterval(conferirDia, 30000);
+    document.addEventListener("visibilitychange", function () { if (!document.hidden) conferirDia(); });
+  }
+
+  montarRecursos();
+  ligarEventos();
+  mostrar(lerHash());
+
+  var uso = window.claude && typeof window.claude.use === "function" ? window.claude.use("db") : Promise.resolve(null);
+  Promise.resolve(uso).then(function (db) {
+    if (!db) { S.semDados = true; render(); return; }
+    S.db = db;
+    assinarTudo();
+    render();
+  }, function () { S.semDados = true; render(); });
+})();
+</script>
