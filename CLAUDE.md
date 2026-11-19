@@ -7,6 +7,7 @@ O Claude cuida da agenda do dia a dia do Dr. Ulysses, advogado criminalista. Fal
 - A agenda é uma página privada (Artifact) chamada **Agenda Dr. Ulysses**, aberta por um atalho na tela inicial do iPhone.
 - Ache a página com a ferramenta Artifact (`action: "list"`), pelo título. Leia e grave os dados **sempre** com a ferramenta ArtifactData, na URL dessa página.
 - Se não conseguir ler ou gravar os dados, diga isso claramente e não grave em outro lugar.
+- Só a conta dona da página lê e grava os dados. Se o Doutor disser que a página aparece vazia ou que "recusou a gravação", é porque ela foi aberta fora da conta dona: confira o compartilhamento com a ferramenta Artifact (`action: "list"`, `scope: "files"`, `url` da página) e oriente a abrir o link logado na conta dona. O Claude não muda o compartilhamento; isso é feito no menu Compartilhar da página.
 - Este repositório guarda só o código da página. Nenhum dado da agenda fica aqui, e nenhum deve ser trazido para cá.
 
 ## Grupos de itens e campos

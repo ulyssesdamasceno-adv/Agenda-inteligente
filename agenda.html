@@ -107,6 +107,7 @@ button { -webkit-tap-highlight-color: transparent; }
 .dateline p { margin: 6px 0 0; font-size: 13.5px; color: var(--muted); }
 .dateline .nota-dia { color: var(--accent-ink); font-weight: 600; }
 .dateline .sync.crit { color: var(--crit); font-weight: 600; }
+.dateline .conta { margin-top: 10px; padding: 12px 14px; border-radius: 12px; background: var(--crit-bg); color: var(--crit); font-size: 15px; font-weight: 600; }
 
 .tabs {
   position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5;
@@ -284,6 +285,7 @@ textarea.in { min-height: 46vh; line-height: 1.5; resize: vertical; }
     <h1 id="hoje-titulo">Agenda</h1>
     <p class="nota-dia" id="hoje-nota" hidden></p>
     <p class="sync" id="sync">Abrindo a agenda…</p>
+    <p class="conta" id="aviso-conta" role="alert" hidden>Esta página não está aberta na conta dona da agenda. Aqui os itens não aparecem e nada é gravado. Entre no claude.ai com a conta que criou a agenda e abra o link de novo.</p>
   </div>
 
   <nav class="tabs" aria-label="Seções da agenda">
@@ -666,13 +668,16 @@ textarea.in { min-height: 46vh; line-height: 1.5; resize: vertical; }
   var PRINCIPAIS = ["tarefasPend", "tarefasFeitas", "compromissos", "prazosAbertos"];
 
   var S = {
-    hoje: P.hojeISO(), view: "hoje", db: null, semDados: false, atrasou: false, timerCarga: 0, lidoEm: null,
+    hoje: P.hojeISO(), view: "hoje", db: null, semDados: false, negado: false, dono: null, donoSabido: false, notasExiste: null,
+    atrasou: false, timerCarga: 0, lidoEm: null,
     tarefasPend: new Map(), tarefasFeitas: new Map(), compromissos: new Map(),
     prazosAbertos: new Map(), prazosFeitos: new Map(), feriados: new Map(),
     visto: {}, confirmado: {}, erroLeitura: {},
     ocupado: new Set(), edit: null, fechando: false, confirmaPrazo: "", confirmaFeriado: ""
   };
   var N = { sujo: false, salvando: false, timer: 0, remoto: false, salvo: "", salvoEm: null, erro: "" };
+
+  var MSG_CONTA = "Esta página não está aberta na conta dona da agenda. Aqui os itens não aparecem e nada é gravado. Entre no claude.ai com a conta que criou a agenda e abra o link de novo.";
 
   function $(id) { return document.getElementById(id); }
   function str(x) { return typeof x === "string" ? x : x == null ? "" : String(x); }
@@ -741,17 +746,26 @@ textarea.in { min-height: 46vh; line-height: 1.5; resize: vertical; }
     assinar("notas", db.doc("notas/texto"), aplicarNotas);
   }
   function conferirCarga() {
+    conferirAcesso();
     var nomes = PRINCIPAIS.concat(["prazosFeitos", "feriados", "notas"]);
     if (nomes.every(function (n) { return S.confirmado[n] || S.erroLeitura[n]; })) { clearTimeout(S.timerCarga); S.atrasou = false; }
   }
+  /* Só a conta dona lê os dados. Se a plataforma não disser quem é o dono, o documento de notas serve de prova:
+     ele existe desde a criação da agenda, e quem não é o dono o recebe como inexistente. */
+  function conferirAcesso() {
+    if (S.negado || !S.donoSabido || S.dono !== null) return;
+    if (S.confirmado.notas && S.notasExiste === false) S.negado = true;
+  }
   function situacao(nomes) {
     if (S.semDados) return "sem";
+    if (S.negado) return "negado";
     if (nomes.every(function (n) { return S.visto[n]; })) return "ok";
     if (nomes.some(function (n) { return S.erroLeitura[n]; })) return "erro";
     return S.atrasou ? "atraso" : "carregando";
   }
   function avisoCarga(sit, oque) {
-    var t = sit === "sem" ? "Sem acesso aos dados: não foi possível ler " + oque + "."
+    var t = sit === "negado" ? "Sem acesso: esta página não está aberta na conta dona da agenda."
+      : sit === "sem" ? "Sem acesso aos dados: não foi possível ler " + oque + "."
       : sit === "erro" ? "Não consegui ler " + oque + ". Não confie nesta lista agora."
       : sit === "atraso" ? "A agenda ainda não respondeu: não consegui ler " + oque + "."
       : "Carregando " + oque + "…";
@@ -796,7 +810,10 @@ textarea.in { min-height: 46vh; line-height: 1.5; resize: vertical; }
   /* ---------- gravação ---------- */
   function mensagemErro(e) {
     var c = e && e.code;
-    if (c === "invalid_argument" || c === "transform_error") return "A agenda recusou a gravação. Nada foi gravado; confira se você está na sua conta.";
+    if (c === "invalid_argument" || c === "transform_error") {
+      return "A agenda recusou a gravação. Nada foi gravado. Isso acontece quando a página não está aberta na conta dona da agenda: entre no claude.ai com a conta que criou a agenda e abra o link de novo. (Detalhe para o Claude: " +
+        c + ", dono: " + (S.dono === true ? "sim" : S.dono === false ? "não" : "não informado") + ".)";
+    }
     if (c === "resource_exhausted") return "Muitas gravações em pouco tempo. Nada foi gravado; espere um instante e tente de novo.";
     if (c === "quota_exceeded") return "A agenda está cheia. Nada foi gravado; exclua itens antigos para abrir espaço.";
     if (c === "revoked" || c === "not_granted" || c === "capability_disabled" || c === "capability_removed") return "Esta página perdeu o acesso aos dados. Nada foi gravado; feche e abra a agenda de novo.";
@@ -810,6 +827,7 @@ textarea.in { min-height: 46vh; line-height: 1.5; resize: vertical; }
   }
   /* Uma gravação por vez em cada documento. Devolve true se gravou. */
   function gravar(caminho, op, okMsg) {
+    if (S.negado) { alerta(MSG_CONTA); return Promise.resolve(false); }
     if (!S.db) {
       alerta(S.semDados ? "Sem acesso aos dados da agenda. Nada foi gravado." : "A agenda ainda está abrindo. Nada foi gravado; tente de novo em instantes.");
       return Promise.resolve(false);
@@ -916,7 +934,9 @@ textarea.in { min-height: 46vh; line-height: 1.5; resize: vertical; }
     $("hoje-nota").textContent = nota;
     $("hoje-nota").hidden = !nota;
 
+    $("aviso-conta").hidden = !S.negado;
     if (S.semDados) { sync = "Sem acesso aos dados da agenda. Abra a página pelo claude.ai, com a sua conta."; crit = true; }
+    else if (S.negado) { sync = "Sem acesso aos dados nesta conta."; crit = true; }
     else if (!S.db) sync = "Abrindo a agenda…";
     else if (PRINCIPAIS.some(function (n) { return S.erroLeitura[n]; })) { sync = "Não consegui ler parte dos dados da agenda. Feche e abra a página de novo."; crit = true; }
     else if (PRINCIPAIS.every(function (n) { return S.confirmado[n]; })) sync = "Agenda atualizada às " + hhmm(S.lidoEm) + ".";
@@ -930,7 +950,7 @@ textarea.in { min-height: 46vh; line-height: 1.5; resize: vertical; }
     var sit = situacao(["tarefasPend", "tarefasFeitas"]), box = $("quick-list"), sub = $("quick-sub");
     box.replaceChildren();
     if (sit !== "ok") {
-      sub.textContent = sit === "carregando" ? "Carregando…" : "Não consegui ler as tarefas";
+      sub.textContent = sit === "carregando" ? "Carregando…" : sit === "negado" ? "Sem acesso nesta conta" : "Não consegui ler as tarefas";
       box.append(avisoCarga(sit, "as tarefas"));
       return;
     }
@@ -1066,6 +1086,7 @@ textarea.in { min-height: 46vh; line-height: 1.5; resize: vertical; }
   /* ---------- Notas ---------- */
   function aplicarNotas(snap) {
     var campo = $("notas-texto"), texto = snap.exists ? str((snap.data() || {}).texto) : "";
+    S.notasExiste = !!snap.exists;
     if (snap.metadata && snap.metadata.hasPendingWrites) return;
     if (!N.sujo && !N.salvando) {
       if (campo.value !== texto) campo.value = texto;
@@ -1074,11 +1095,11 @@ textarea.in { min-height: 46vh; line-height: 1.5; resize: vertical; }
     } else if (texto !== N.salvo && texto !== campo.value) N.remoto = true;
   }
   function renderNotas() {
-    var campo = $("notas-texto"), st = $("notas-status"), pronto = !!S.visto.notas && !!S.db, sit = situacao(["notas"]), t, crit = false;
+    var campo = $("notas-texto"), st = $("notas-status"), pronto = !!S.visto.notas && !!S.db && !S.negado, sit = situacao(["notas"]), t, crit = false;
     campo.disabled = !pronto;
-    campo.placeholder = pronto ? "Escreva aqui. As notas são gravadas na agenda." : "Carregando as notas…";
+    campo.placeholder = pronto ? "Escreva aqui. As notas são gravadas na agenda." : S.negado ? "" : "Carregando as notas…";
     $("notas-salvar").disabled = !pronto || N.salvando || !N.sujo;
-    if (!pronto) { t = sit === "carregando" ? "Carregando as notas…" : "Não consegui ler as notas."; crit = sit !== "carregando"; }
+    if (!pronto) { t = sit === "carregando" ? "Carregando as notas…" : sit === "negado" ? "Sem acesso: esta página não está aberta na conta dona da agenda." : "Não consegui ler as notas."; crit = sit !== "carregando"; }
     else if (N.erro) { t = N.erro; crit = true; }
     else if (N.salvando) t = "Gravando…";
     else if (N.remoto) { t = "As notas mudaram em outro lugar. Ao salvar, o texto daqui substitui o de lá."; crit = true; }
@@ -1362,12 +1383,22 @@ textarea.in { min-height: 46vh; line-height: 1.5; resize: vertical; }
   ligarEventos();
   mostrar(lerHash());
 
-  var uso = window.claude && typeof window.claude.use === "function" ? window.claude.use("db") : Promise.resolve(null);
-  Promise.resolve(uso).then(function (db) {
+  function usar(nome) {
+    if (!window.claude || typeof window.claude.use !== "function") return Promise.resolve(null);
+    return Promise.resolve().then(function () { return window.claude.use(nome); }).catch(function () { return null; });
+  }
+  usar("db").then(function (db) {
     if (!db) { S.semDados = true; render(); return; }
     S.db = db;
     assinarTudo();
     render();
-  }, function () { S.semDados = true; render(); });
+    usar("user").then(function (u) { return u && typeof u.isOwner === "function" ? u.isOwner() : null; }).catch(function () { return null; }).then(function (dono) {
+      S.dono = dono === true ? true : dono === false ? false : null;
+      S.donoSabido = true;
+      if (S.dono === false) S.negado = true;
+      conferirAcesso();
+      render();
+    });
+  });
 })();
 </script>
