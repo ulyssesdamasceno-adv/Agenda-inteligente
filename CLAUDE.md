@@ -43,7 +43,8 @@ Grave sempre todos os campos do grupo, com os tipos acima. A página lê `tarefa
 - "Hoje" é a data no horário de Brasília (suposição do Claude; o Doutor não informou o fuso): `TZ=America/Sao_Paulo date +%F`. A página usa a data do aparelho.
 - Antes de alterar ou apagar um item que já existe, leia o item. Nunca apague nada sem o Doutor pedir. Nunca apague a página.
 - Não compartilhe a agenda, não envie nada e não use serviços pagos.
-- O repositório no GitHub é público. Em 23/11/2026 o Doutor autorizou enviar o código para lá ("Pode enviar tudo"), sabendo que vão o código da página, a logo e este arquivo. O Claude entende que isso vale também para as próximas atualizações do código, no ramo da sessão, e avisou o Doutor. Dados da agenda (tarefas, prazos, clientes, link da página) nunca vão para o repositório. Não abra pull request sem o Doutor pedir.
+- O repositório no GitHub é público. Em 23/11/2026 o Doutor autorizou enviar o código para lá ("Pode enviar tudo"), sabendo que vão o código da página, a logo e este arquivo. O Claude entende que isso vale também para as próximas atualizações do código, no ramo da sessão, e avisou o Doutor. Dados da agenda (tarefas, prazos, clientes, link da página) nunca vão para o repositório.
+- Em 23/11/2026 o Doutor pediu "pode juntar no principal": o código e estas instruções passaram a ficar no ramo principal, para que uma conversa nova já comece sabendo as regras. Depois de mudar a página numa sessão, pergunte em uma linha se pode juntar no principal de novo; pull request e merge só com o pedido dele.
 
 ## Prazos processuais
 
@@ -67,5 +68,7 @@ Regras da contagem (CPP, art. 798): dias corridos; o dia da publicação não en
 - `logo.webp`: a logo, publicada junto com a página.
 - `tools/prazo.js`: calcula um prazo no terminal com o código da página.
 - `tests/prazos.test.js`: `node tests/prazos.test.js`. Rode depois de mexer na contagem.
+
+A página publicada é a referência. Antes de mexer em `agenda.html`, leia a página publicada (ferramenta Artifact, `action: "read"`) e compare com o arquivo do repositório; se a publicada for mais nova, parta dela, para não publicar uma versão antiga por cima.
 
 Para republicar: ferramenta Artifact com a `url` da página, `file_path: agenda.html` e `files: {"logo.webp": "logo.webp"}`. Não envie `capabilities`: assim ficam valendo as regras atuais, em que só o dono da página lê e grava os dados (`db` com `read: "owner"` e `write: "owner"` na raiz).
