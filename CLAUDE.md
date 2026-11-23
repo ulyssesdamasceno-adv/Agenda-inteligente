@@ -29,6 +29,7 @@ Grave sempre todos os campos do grupo, com os tipos acima. A página lê `tarefa
 ## O que o Doutor pode pedir
 
 - "anota ..." = grave um item novo no grupo certo e confirme em uma linha
+- O Doutor quer a conversa enxuta (pedido em 23/11/2026: "sem encher a conversa de mensagem"). Aceite vários itens numa mensagem só, grave todos e confirme o lote em uma linha, sem repetir os itens; só escreva mais se faltar dado ou algo falhar
 - "hoje" = prazos próximos, compromissos de hoje por horário, tarefas de hoje e pendentes, e uma sugestão de ordem. Dos presídios, diga só quantos agendamentos há hoje e na semana corrente, sem nomes nem horários (o Doutor pediu: "só o número... sem adentrar nas informações")
 - agendamentos nos presídios = quando o Doutor pedir os agendamentos, liste dia por dia: nome, horário no formato "08h até 08:30h" e presídio. Para anotar um, grave em `agendamentos`; se faltar data, horário ou presídio, pergunte. Se o Doutor não disser se está pago, grave `pago: false` e diga na confirmação que ficou como não pago (padrão escolhido pelo Claude, igual ao do formulário)
 - "prazos" = prazos em aberto, do mais próximo ao mais distante
