@@ -197,6 +197,7 @@ select.in {
 }
 textarea.in { min-height: 46vh; line-height: 1.5; resize: vertical; }
 .in::placeholder { color: var(--muted); }
+.hora-in { font-variant-numeric: tabular-nums; }
 .in:disabled { opacity: .6; }
 .hint { margin: 0; font-size: 13px; color: var(--muted); }
 .seg { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); gap: 4px; padding: 4px; border-radius: 12px; background: var(--chip); }
@@ -367,7 +368,7 @@ textarea.in { min-height: 46vh; line-height: 1.5; resize: vertical; }
         <div class="field"><label for="c-c-titulo">Compromisso</label><input class="in" id="c-c-titulo" type="text" maxlength="300" autocomplete="off"></div>
         <div class="pair">
           <div class="field"><label for="c-c-data">Data</label><input class="in" id="c-c-data" type="date"></div>
-          <div class="field"><label for="c-c-hora">Hora <span class="opt">(opcional)</span></label><input class="in" id="c-c-hora" type="time"></div>
+          <div class="field"><label for="c-c-hora">Hora <span class="opt">(opcional)</span></label><input class="in hora-in" id="c-c-hora" type="text" inputmode="numeric" autocomplete="off" placeholder="hh:mm"></div>
         </div>
         <div class="field"><label for="c-c-local">Local <span class="opt">(opcional)</span></label><input class="in" id="c-c-local" type="text" maxlength="200" autocomplete="off"></div>
       </div>
@@ -377,8 +378,8 @@ textarea.in { min-height: 46vh; line-height: 1.5; resize: vertical; }
         <div class="field"><label for="c-a-presidio">Presídio</label><input class="in" id="c-a-presidio" type="text" maxlength="200" autocomplete="off" list="lista-presidios"><datalist id="lista-presidios"></datalist></div>
         <div class="field"><label for="c-a-data">Data</label><input class="in" id="c-a-data" type="date"></div>
         <div class="pair">
-          <div class="field"><label for="c-a-inicio">Das</label><input class="in" id="c-a-inicio" type="time"></div>
-          <div class="field"><label for="c-a-fim">Até <span class="opt">(opcional)</span></label><input class="in" id="c-a-fim" type="time"></div>
+          <div class="field"><label for="c-a-inicio">Das</label><input class="in hora-in" id="c-a-inicio" type="text" inputmode="numeric" autocomplete="off" placeholder="hh:mm"></div>
+          <div class="field"><label for="c-a-fim">Até <span class="opt">(opcional)</span></label><input class="in hora-in" id="c-a-fim" type="text" inputmode="numeric" autocomplete="off" placeholder="hh:mm"></div>
         </div>
         <div class="field">
           <span class="rotulo" id="c-a-pago-rotulo">Pagamento</span>
@@ -889,7 +890,48 @@ textarea.in { min-height: 46vh; line-height: 1.5; resize: vertical; }
     S.feriados.forEach(function (v) { if (P.isISO(v.data)) o[v.data] = str(v.descricao); });
     return o;
   }
-  function horaValida(x) { return /^\d{2}:\d{2}$/.test(str(x)) ? x : ""; }
+  function horaValida(x) { return /^([01]\d|2[0-3]):[0-5]\d$/.test(str(x)) ? x : ""; }
+  /* Hora digitada só com números: "0830" vira "08:30", "8" vira "08", "245" vira "02:45", "087" vira "08:07". */
+  function mascaraHora(bruto) {
+    var d = str(bruto).replace(/\D/g, ""), hh, mm;
+    if (!d) return "";
+    if (+d[0] > 2 || (d.length > 1 && d[0] === "2" && +d[1] > 3)) { hh = "0" + d[0]; mm = d.slice(1); }
+    else { hh = d.slice(0, 2); mm = d.slice(2); }
+    if (mm && +mm[0] > 5) mm = "0" + mm[0];
+    mm = mm.slice(0, 2);
+    return mm ? hh + ":" + mm : hh;
+  }
+  /* Ao sair do campo, só a hora cheia é completada ("08" vira "08:00"); minuto pela metade fica como está e é barrado ao gravar. */
+  function completarHora(v) {
+    if (/^\d$/.test(v)) return "0" + v + ":00";
+    if (/^\d{2}$/.test(v) && +v <= 23) return v + ":00";
+    return v;
+  }
+  function ligarHora(id, aoDigitar, aoSair) {
+    var el = $(id), antes = "";
+    el.addEventListener("focus", function () {
+      antes = el.value;
+      setTimeout(function () { try { el.setSelectionRange(0, el.value.length); } catch (e) { /* sem seleção, o campo cheio recomeça ao digitar */ } }, 0);
+    });
+    el.addEventListener("input", function () {
+      var v = el.value;
+      if (antes.length === 5 && v.length > 5 && v.indexOf(antes) === 0) v = v.slice(5);
+      el.value = antes = mascaraHora(v);
+      if (aoDigitar) aoDigitar();
+    });
+    el.addEventListener("blur", function () {
+      el.value = antes = completarHora(el.value);
+      if (aoSair) aoSair();
+    });
+  }
+  function sugerirFim() {
+    var ini = $("c-a-inicio").value, fim = $("c-a-fim"), m;
+    if (horaValida(ini) && (!fim.value || fim.dataset.auto === "1")) {
+      m = Math.min(minutos(ini) + 30, 23 * 60 + 59);
+      fim.value = String(Math.floor(m / 60)).padStart(2, "0") + ":" + String(m % 60).padStart(2, "0");
+      fim.dataset.auto = "1";
+    }
+  }
   function minutos(hhmm) { return +hhmm.slice(0, 2) * 60 + +hhmm.slice(3); }
   function listaAgendamentos() {
     var out = [];
@@ -1468,15 +1510,16 @@ textarea.in { min-height: 46vh; line-height: 1.5; resize: vertical; }
       dados = { titulo: val("c-c-titulo"), data: val("c-c-data"), hora: val("c-c-hora").slice(0, 5), local: val("c-c-local") };
       if (!dados.titulo) erro = "Escreva o compromisso.";
       else if (!P.isISO(dados.data)) erro = "Informe a data do compromisso.";
-      else if (dados.hora && !/^\d{2}:\d{2}$/.test(dados.hora)) erro = "Hora inválida. Use HH:MM ou deixe em branco.";
+      else if (dados.hora && !horaValida(dados.hora)) erro = "Hora incompleta ou inválida. Digite as horas e os minutos, como 1430, ou deixe em branco.";
       else ok = "Compromisso anotado para " + quando(dados.data) + (dados.hora ? ", às " + dados.hora : "") + ".";
     } else if (col === "agendamentos") {
       dados = { nome: val("c-a-nome"), data: val("c-a-data"), inicio: val("c-a-inicio").slice(0, 5), fim: val("c-a-fim").slice(0, 5), presidio: val("c-a-presidio"), pago: $("c-a-pago-sim").checked };
       if (!dados.nome) erro = "Escreva o nome do cliente.";
       else if (!dados.presidio) erro = "Informe o presídio.";
       else if (!P.isISO(dados.data)) erro = "Informe a data do agendamento.";
-      else if (!horaValida(dados.inicio)) erro = "Informe o horário de início.";
-      else if (dados.fim && !horaValida(dados.fim)) erro = "Horário final inválido. Use HH:MM ou deixe em branco.";
+      else if (!dados.inicio) erro = "Informe o horário de início.";
+      else if (!horaValida(dados.inicio)) erro = "Horário de início incompleto ou inválido. Digite as horas e os minutos, como 0830.";
+      else if (dados.fim && !horaValida(dados.fim)) erro = "Horário final incompleto ou inválido. Digite as horas e os minutos, como 0900, ou deixe em branco.";
       else if (dados.fim && dados.fim <= dados.inicio) erro = "O horário final precisa ser depois do início.";
       else ok = "Agendado: " + dados.nome + ", " + quando(dados.data) + ", " + P.fmtFaixa(dados.inicio, dados.fim) + (dados.pago ? ", pago." : ", não pago.");
     } else if (!editando && $("c-p-modo-calc").checked) {
@@ -1602,16 +1645,9 @@ textarea.in { min-height: 46vh; line-height: 1.5; resize: vertical; }
     $("add-btn").addEventListener("click", function () { abrirNovo(S.view === "prazos" ? "prazos" : S.view === "presidios" ? "agendamentos" : "tarefas"); });
     $("hoje-pres-btn").addEventListener("click", function () { verPresidios(""); });
     $("pres-novo-btn").addEventListener("click", function () { abrirNovo("agendamentos"); });
-    $("c-a-inicio").addEventListener("change", function () {
-      var ini = this.value.slice(0, 5), fim = $("c-a-fim"), m;
-      if (horaValida(ini) && (!fim.value || fim.dataset.auto === "1")) {
-        m = Math.min(minutos(ini) + 30, 23 * 60 + 59);
-        fim.value = String(Math.floor(m / 60)).padStart(2, "0") + ":" + String(m % 60).padStart(2, "0");
-        fim.dataset.auto = "1";
-      }
-      avisoConflito();
-    });
-    $("c-a-fim").addEventListener("input", function () { this.dataset.auto = ""; avisoConflito(); });
+    ligarHora("c-c-hora");
+    ligarHora("c-a-inicio", function () { sugerirFim(); avisoConflito(); }, function () { sugerirFim(); avisoConflito(); });
+    ligarHora("c-a-fim", function () { $("c-a-fim").dataset.auto = ""; avisoConflito(); }, avisoConflito);
     $("c-a-data").addEventListener("change", avisoConflito);
     $("hoje-calc-btn").addEventListener("click", function () { abrirNovo("prazos", "calc"); });
     $("prazos-calc-btn").addEventListener("click", function () { abrirNovo("prazos", "calc"); });
