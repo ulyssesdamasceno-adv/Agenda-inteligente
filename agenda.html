@@ -111,17 +111,17 @@ button { -webkit-tap-highlight-color: transparent; }
 
 .tabs {
   position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5;
-  display: flex; align-items: center; gap: 4px; padding-block: 8px;
+  display: flex; align-items: center; gap: 2px; padding-block: 8px;
   background: var(--bg); border-bottom: 1px solid var(--line);
 }
 .tab {
-  flex: 1 1 0; min-width: 0; min-height: 44px; padding: 0 4px; border-radius: 10px;
-  display: grid; place-items: center; text-align: center; text-decoration: none;
-  font-size: 15px; font-weight: 600; color: var(--muted);
+  flex: 1 1 auto; min-width: 0; min-height: 44px; padding: 0 5px; border-radius: 10px;
+  display: grid; place-items: center; text-align: center; text-decoration: none; white-space: nowrap;
+  font-size: 14.5px; font-weight: 600; color: var(--muted);
 }
 .tab[aria-current="page"] { background: var(--action); color: var(--on-action); }
 .tab-add {
-  flex: 0 0 44px; height: 44px; border-radius: 10px; border: 1.5px solid var(--action);
+  flex: 0 0 44px; height: 44px; margin-left: 2px; border-radius: 10px; border: 1.5px solid var(--action);
   background: transparent; color: var(--action); display: grid; place-items: center; cursor: pointer;
 }
 
@@ -203,8 +203,12 @@ textarea.in { min-height: 46vh; line-height: 1.5; resize: vertical; }
 .seg span { display: grid; place-items: center; min-height: 40px; padding: 4px 6px; border-radius: 9px; text-align: center; font-size: 14.5px; font-weight: 600; line-height: 1.2; color: var(--chip-ink); }
 .seg input:checked + span { background: var(--surface); color: var(--ink); box-shadow: var(--shadow); }
 .seg input:focus-visible + span { outline: 3px solid var(--focus); outline-offset: 1px; }
+.seg.seg-flex { display: flex; }
+.seg.seg-flex label { flex: 1 1 auto; }
+.seg.seg-flex span { padding: 4px 8px; font-size: 14px; }
 .checkline { display: grid; grid-template-columns: 24px minmax(0, 1fr); gap: 10px; align-items: start; font-size: 14.5px; cursor: pointer; }
 .checkline input { width: 22px; height: 22px; margin: 0; accent-color: var(--action); }
+.form-aviso { margin: 0; padding: 10px 12px; border-radius: 10px; background: var(--warn-bg); color: var(--warn); font-size: 14px; font-weight: 600; }
 .form-erro { margin: 14px 0 0; padding: 10px 12px; border-radius: 10px; background: var(--crit-bg); color: var(--crit); font-size: 14.5px; font-weight: 600; }
 .actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
 .btn { min-height: 46px; padding: 0 16px; border: 1px solid transparent; border-radius: 10px; font-size: 15.5px; font-weight: 600; cursor: pointer; }
@@ -227,6 +231,32 @@ textarea.in { min-height: 46vh; line-height: 1.5; resize: vertical; }
 .calc-steps { margin: 12px 0 0; padding-left: 20px; display: grid; gap: 6px; font-size: 14px; }
 .calc-avisos { list-style: none; margin: 12px 0 0; padding: 10px 12px; display: grid; gap: 8px; border-radius: 10px; background: var(--warn-bg); color: var(--warn); font-size: 14px; font-weight: 600; }
 .calc-out .hint { margin-top: 12px; }
+
+/* ---------- presídios ---------- */
+.stats { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 10px; margin-top: 12px; }
+.stat { display: grid; gap: 2px; align-content: start; padding: 12px 14px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); text-align: left; cursor: pointer; }
+.stat-n { font-family: var(--font-display); font-size: 30px; font-weight: 600; line-height: 1.1; font-variant-numeric: tabular-nums; }
+.stat-l { font-size: 13.5px; color: var(--muted); }
+.semana-card { margin-top: 12px; padding: 14px 10px 12px; background: var(--surface); border: 1px solid var(--line); border-radius: 16px; box-shadow: var(--shadow); }
+.semana-nav { display: grid; grid-template-columns: 40px minmax(0, 1fr) 40px; align-items: center; gap: 8px; }
+.semana-nav h3 { margin: 0; text-align: center; font-family: var(--font-display); font-size: 16px; font-weight: 600; letter-spacing: .04em; line-height: 1.25; text-wrap: balance; }
+.icon-btn[disabled] { opacity: .35; cursor: default; }
+.dias { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 3px; margin-top: 12px; }
+.dia { display: grid; justify-items: center; gap: 5px; min-width: 0; padding: 9px 0 8px; border: 1.5px solid transparent; border-radius: 12px; background: transparent; cursor: pointer; }
+.dia-sem { font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.dia-num { font-family: var(--font-display); font-size: 19px; font-weight: 600; line-height: 1; font-variant-numeric: tabular-nums; }
+.dia-n { min-width: 26px; height: 24px; padding: 0 7px; border-radius: 999px; display: grid; place-items: center; font-size: 13px; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--muted); }
+.dia.tem .dia-n { background: linear-gradient(135deg, var(--gold-hi), var(--gold) 55%, var(--gold-lo)); color: var(--on-gold); }
+.dia.hoje { border-color: var(--gold); }
+.dia[aria-pressed="true"] { background: var(--action); border-color: var(--action); color: var(--on-action); }
+.dia[aria-pressed="true"] .dia-sem, .dia[aria-pressed="true"] .dia-n { color: var(--on-action); }
+.dia[aria-pressed="true"].tem .dia-n { background: var(--on-action); color: var(--action); }
+.semana-pe { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 4px 12px; min-height: 40px; margin-top: 10px; padding: 8px 4px 0; border-top: 1px solid var(--line-soft); font-size: 14px; color: var(--muted); }
+.semana-pe strong { color: var(--ink); font-variant-numeric: tabular-nums; }
+.row.is-faixa { grid-template-columns: 96px minmax(0, 1fr); }
+.faixa { padding: 13px 8px 0 0; display: grid; gap: 1px; font-variant-numeric: tabular-nums; color: var(--accent-ink); }
+.faixa b { font-size: 15.5px; font-weight: 700; }
+.faixa span { font-size: 12.5px; font-weight: 600; }
 
 /* ---------- dobras ---------- */
 .fold { margin-top: 24px; border-top: 1px solid var(--line); }
@@ -256,7 +286,11 @@ textarea.in { min-height: 46vh; line-height: 1.5; resize: vertical; }
 
 @media (max-width: 430px) {
   .feriado-form { grid-template-columns: minmax(0, 1fr); }
-  .tab { font-size: 14.5px; }
+  .tab { font-size: 13.5px; padding: 0 3px; }
+}
+@media (max-width: 359px) {
+  .tab { font-size: 12px; padding: 0 1px; }
+  .tab-add { flex-basis: 38px; height: 40px; }
 }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; scroll-behavior: auto !important; } }
 </style>
@@ -292,6 +326,7 @@ textarea.in { min-height: 46vh; line-height: 1.5; resize: vertical; }
     <a class="tab" href="#hoje" data-view="hoje" aria-current="page">Hoje</a>
     <a class="tab" href="#semana" data-view="semana">Semana</a>
     <a class="tab" href="#prazos" data-view="prazos">Prazos</a>
+    <a class="tab" href="#presidios" data-view="presidios">Presídios</a>
     <a class="tab" href="#notas" data-view="notas">Notas</a>
     <button type="button" class="tab-add" id="add-btn" aria-label="Anotar item novo"><svg aria-hidden="true" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button>
   </nav>
@@ -304,10 +339,11 @@ textarea.in { min-height: 46vh; line-height: 1.5; resize: vertical; }
       <button type="button" class="icon-btn" id="compose-fechar" aria-label="Fechar"><svg aria-hidden="true" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
     </div>
     <form id="compose-form" novalidate>
-      <div class="seg" id="c-tipos" role="radiogroup" aria-label="O que anotar">
+      <div class="seg seg-flex" id="c-tipos" role="radiogroup" aria-label="O que anotar">
         <label><input type="radio" name="c-tipo" id="c-tipo-tarefas" value="tarefas" checked><span>Tarefa</span></label>
         <label><input type="radio" name="c-tipo" id="c-tipo-compromissos" value="compromissos"><span>Compromisso</span></label>
         <label><input type="radio" name="c-tipo" id="c-tipo-prazos" value="prazos"><span>Prazo</span></label>
+        <label><input type="radio" name="c-tipo" id="c-tipo-agendamentos" value="agendamentos"><span>Presídio</span></label>
       </div>
 
       <div class="fields" id="f-tarefas">
@@ -322,6 +358,17 @@ textarea.in { min-height: 46vh; line-height: 1.5; resize: vertical; }
           <div class="field"><label for="c-c-hora">Hora <span class="opt">(opcional)</span></label><input class="in" id="c-c-hora" type="time"></div>
         </div>
         <div class="field"><label for="c-c-local">Local <span class="opt">(opcional)</span></label><input class="in" id="c-c-local" type="text" maxlength="200" autocomplete="off"></div>
+      </div>
+
+      <div class="fields" id="f-agendamentos" hidden>
+        <div class="field"><label for="c-a-nome">Nome do cliente</label><input class="in" id="c-a-nome" type="text" maxlength="200" autocomplete="off" autocapitalize="words"></div>
+        <div class="field"><label for="c-a-presidio">Presídio</label><input class="in" id="c-a-presidio" type="text" maxlength="200" autocomplete="off" list="lista-presidios"><datalist id="lista-presidios"></datalist></div>
+        <div class="field"><label for="c-a-data">Data</label><input class="in" id="c-a-data" type="date"></div>
+        <div class="pair">
+          <div class="field"><label for="c-a-inicio">Das</label><input class="in" id="c-a-inicio" type="time"></div>
+          <div class="field"><label for="c-a-fim">Até <span class="opt">(opcional)</span></label><input class="in" id="c-a-fim" type="time"></div>
+        </div>
+        <p class="form-aviso" id="c-a-aviso" role="status" hidden></p>
       </div>
 
       <div class="fields" id="f-prazos" hidden>
@@ -374,6 +421,10 @@ textarea.in { min-height: 46vh; line-height: 1.5; resize: vertical; }
     <div class="sec">
       <div class="sec-head"><h2>Prazos próximos<span class="n" id="hoje-prazos-n"></span></h2><button type="button" class="link-btn" id="hoje-calc-btn">Calcular prazo</button></div>
       <div id="hoje-prazos"></div>
+    </div>
+    <div class="sec">
+      <div class="sec-head"><h2>Presídios</h2><button type="button" class="link-btn" id="hoje-pres-btn">Ver agendamentos</button></div>
+      <div id="hoje-pres"></div>
     </div>
     <div class="sec">
       <div class="sec-head"><h2>Compromissos de hoje<span class="n" id="hoje-comps-n"></span></h2><button type="button" class="link-btn" id="hoje-comp-btn" aria-label="Anotar compromisso">Anotar</button></div>
@@ -429,6 +480,18 @@ textarea.in { min-height: 46vh; line-height: 1.5; resize: vertical; }
     </details>
   </section>
 
+  <section class="view" id="view-presidios" hidden>
+    <div class="sec">
+      <div class="sec-head"><h2>Agendamentos nos presídios</h2></div>
+      <div id="pres-semana"></div>
+    </div>
+    <div class="sec">
+      <div class="sec-head"><h2 id="pres-dia-titulo">Agendamentos do dia</h2></div>
+      <div id="pres-dia"></div>
+      <div class="actions"><button type="button" class="btn btn-primary" id="pres-novo-btn">Agendar</button></div>
+    </div>
+  </section>
+
   <section class="view" id="view-notas" hidden>
     <div class="sec">
       <div class="sec-head"><h2>Notas</h2></div>
@@ -471,6 +534,11 @@ textarea.in { min-height: 46vh; line-height: 1.5; resize: vertical; }
   function fmtDia(iso) { return DIAS_C[diaSemana(iso)] + " " + fmtDiaMes(iso); }
   function fmtLonga(iso) { var p = iso.split("-"); return DIAS[diaSemana(iso)] + ", " + (+p[2]) + " de " + MESES[+p[1] - 1]; }
   function plural(n, um, varios) { return n + " " + (n === 1 ? um : (varios || um + "s")); }
+  /* A semana da agenda vai de segunda a domingo: devolve a segunda-feira da semana da data. */
+  function inicioSemana(iso) { return addDias(iso, -((diaSemana(iso) + 6) % 7)); }
+  /* "08:00" vira "08h"; "08:30" vira "08:30h"; a faixa fica "08h até 08:30h". */
+  function fmtHora(hhmm) { return /^\d{2}:\d{2}$/.test(hhmm || "") ? (hhmm.slice(3) === "00" ? hhmm.slice(0, 2) + "h" : hhmm + "h") : ""; }
+  function fmtFaixa(inicio, fim) { var a = fmtHora(inicio), b = fmtHora(fim); return a && b ? a + " até " + b : a || b; }
 
   /* Páscoa pelo algoritmo gregoriano anônimo (Meeus/Jones/Butcher). */
   function pascoa(ano) {
@@ -652,6 +720,7 @@ textarea.in { min-height: 46vh; line-height: 1.5; resize: vertical; }
   root.Prazos = {
     isISO: isISO, addDias: addDias, diffDias: diffDias, diaSemana: diaSemana, hojeISO: hojeISO,
     fmtData: fmtData, fmtDiaMes: fmtDiaMes, fmtCurta: fmtCurta, fmtDia: fmtDia, fmtLonga: fmtLonga, plural: plural,
+    inicioSemana: inicioSemana, fmtHora: fmtHora, fmtFaixa: fmtFaixa, DIAS_C: DIAS_C, MESES: MESES,
     pascoa: pascoa, feriadoNacional: feriadoNacional, costume: costume, noRecesso: noRecesso, naSuspensao: naSuspensao,
     motivoSemExpediente: motivoSemExpediente, calcular: calcular, restante: restante,
     RECURSOS: RECURSOS, achar: achar, tituloPrazo: tituloPrazo
@@ -663,15 +732,16 @@ textarea.in { min-height: 46vh; line-height: 1.5; resize: vertical; }
 (function () {
   "use strict";
   var P = window.Prazos;
-  var VIEWS = ["hoje", "semana", "prazos", "notas"];
-  var NOME = { tarefas: "tarefa", compromissos: "compromisso", prazos: "prazo" };
+  var VIEWS = ["hoje", "semana", "prazos", "presidios", "notas"];
+  var NOME = { tarefas: "tarefa", compromissos: "compromisso", prazos: "prazo", agendamentos: "agendamento" };
   var PRINCIPAIS = ["tarefasPend", "tarefasFeitas", "compromissos", "prazosAbertos"];
 
   var S = {
     hoje: P.hojeISO(), view: "hoje", db: null, semDados: false, negado: false, dono: null, donoSabido: false, notasExiste: null,
     atrasou: false, timerCarga: 0, lidoEm: null,
     tarefasPend: new Map(), tarefasFeitas: new Map(), compromissos: new Map(),
-    prazosAbertos: new Map(), prazosFeitos: new Map(), feriados: new Map(),
+    prazosAbertos: new Map(), prazosFeitos: new Map(), feriados: new Map(), agendamentos: new Map(),
+    semanaVista: "", diaSel: "", diaMostrado: "", presidiosChave: "",
     visto: {}, confirmado: {}, erroLeitura: {},
     ocupado: new Set(), edit: null, fechando: false, confirmaPrazo: "", confirmaFeriado: ""
   };
@@ -743,11 +813,12 @@ textarea.in { min-height: 46vh; line-height: 1.5; resize: vertical; }
     assinar("prazosAbertos", db.collection("prazos").where("feito", "==", false), mapaDe(S.prazosAbertos));
     assinar("prazosFeitos", db.collection("prazos").where("feito", "==", true).orderBy("data", "desc").limit(30), mapaDe(S.prazosFeitos));
     assinar("feriados", db.collection("feriados"), mapaDe(S.feriados));
+    assinar("agendamentos", db.collection("agendamentos").where("data", ">=", P.addDias(P.inicioSemana(S.hoje), -56)), mapaDe(S.agendamentos));
     assinar("notas", db.doc("notas/texto"), aplicarNotas);
   }
   function conferirCarga() {
     conferirAcesso();
-    var nomes = PRINCIPAIS.concat(["prazosFeitos", "feriados", "notas"]);
+    var nomes = PRINCIPAIS.concat(["prazosFeitos", "feriados", "notas", "agendamentos"]);
     if (nomes.every(function (n) { return S.confirmado[n] || S.erroLeitura[n]; })) { clearTimeout(S.timerCarga); S.atrasou = false; }
   }
   /* Só a conta dona lê os dados. Se a plataforma não disser quem é o dono, o documento de notas serve de prova:
@@ -798,6 +869,22 @@ textarea.in { min-height: 46vh; line-height: 1.5; resize: vertical; }
     var o = {};
     S.feriados.forEach(function (v) { if (P.isISO(v.data)) o[v.data] = str(v.descricao); });
     return o;
+  }
+  function horaValida(x) { return /^\d{2}:\d{2}$/.test(str(x)) ? x : ""; }
+  function minutos(hhmm) { return +hhmm.slice(0, 2) * 60 + +hhmm.slice(3); }
+  function listaAgendamentos() {
+    var out = [];
+    S.agendamentos.forEach(function (v, id) {
+      out.push({ id: id, nome: str(v.nome), data: P.isISO(v.data) ? v.data : "", inicio: horaValida(v.inicio), fim: horaValida(v.fim), presidio: str(v.presidio) });
+    });
+    return out;
+  }
+  function porInicio(a, b) { var x = a.inicio || "99:99", y = b.inicio || "99:99"; return x < y ? -1 : x > y ? 1 : cmpTexto(a.nome, b.nome); }
+  function agendamentosDe(dia) { return listaAgendamentos().filter(function (a) { return a.data === dia; }).sort(porInicio); }
+  function contarAgendamentos(de, ate) {
+    var n = 0;
+    S.agendamentos.forEach(function (v) { if (P.isISO(v.data) && v.data >= de && v.data <= ate) n++; });
+    return n;
   }
   function tarefasDeHoje() {
     var todas = listaTarefas(), hoje = S.hoje;
@@ -920,6 +1007,25 @@ textarea.in { min-height: 46vh; line-height: 1.5; resize: vertical; }
     }
     return li;
   }
+  function linhaAgendamento(a) {
+    return h("li", { class: "row is-faixa" },
+      h("span", { class: "faixa" }, h("b", { text: P.fmtHora(a.inicio) || "sem hora" }), a.fim ? h("span", { text: "até " + P.fmtHora(a.fim) }) : null),
+      h("button", { type: "button", class: "row-main", onclick: function () { abrirEdicao("agendamentos", a.id); } },
+        h("span", { class: "row-title", text: a.nome || "(sem nome)" }),
+        h("span", { class: "row-meta" }, h("span", { text: a.presidio || "presídio não informado" }))));
+  }
+  /* Fora da aba Presídios aparece só a quantidade, sem os dados do agendamento. */
+  function linhaPresidios(dia, n) {
+    return h("li", { class: "row is-plain" },
+      h("button", { type: "button", class: "row-main", onclick: function () { verPresidios(dia); } },
+        h("span", { class: "row-title", text: "No presídio: " + P.plural(n, "agendamento") })),
+      h("span", { class: "chip", text: "ver" }));
+  }
+  function verPresidios(dia) {
+    S.semanaVista = dia && P.inicioSemana(dia) !== P.inicioSemana(S.hoje) ? P.inicioSemana(dia) : "";
+    S.diaSel = dia || "";
+    irPara("presidios");
+  }
   function listaOuVazio(linhas, vazio) {
     return linhas.length ? h("ul", { class: "rows" }, linhas) : h("p", { class: "empty", text: vazio });
   }
@@ -980,6 +1086,18 @@ textarea.in { min-height: 46vh; line-height: 1.5; resize: vertical; }
       }
     }
 
+    box = $("hoje-pres"); box.replaceChildren();
+    sit = situacao(["agendamentos"]);
+    if (sit !== "ok") box.append(avisoCarga(sit, "os agendamentos nos presídios"));
+    else {
+      var seg = P.inicioSemana(hoje), dom = P.addDias(seg, 6);
+      box.append(h("div", { class: "stats" },
+        h("button", { type: "button", class: "stat", onclick: function () { verPresidios(S.hoje); } },
+          h("span", { class: "stat-n", text: String(contarAgendamentos(hoje, hoje)) }), h("span", { class: "stat-l", text: "hoje" })),
+        h("button", { type: "button", class: "stat", onclick: function () { verPresidios(""); } },
+          h("span", { class: "stat-n", text: String(contarAgendamentos(seg, dom)) }), h("span", { class: "stat-l", text: "nesta semana, de " + P.fmtDiaMes(seg) + " a " + P.fmtDiaMes(dom) }))));
+    }
+
     box = $("hoje-comps"); box.replaceChildren(); $("hoje-comps-n").textContent = "";
     sit = situacao(["compromissos"]);
     if (sit !== "ok") box.append(avisoCarga(sit, "os compromissos"));
@@ -1006,14 +1124,15 @@ textarea.in { min-height: 46vh; line-height: 1.5; resize: vertical; }
     btn.setAttribute("aria-expanded", String(S.fechando));
     btn.textContent = S.fechando ? "Ocultar o fechamento" : "Fechar o dia";
     if (!S.fechando) return;
-    var sit = situacao(PRINCIPAIS);
+    var sit = situacao(PRINCIPAIS.concat(["agendamentos"]));
     if (sit !== "ok") { box.append(avisoCarga(sit, "a agenda")); return; }
     var hoje = S.hoje, amanha = P.addDias(hoje, 1), tarefas = listaTarefas(), abertos = listaPrazos(S.prazosAbertos);
     var feito = listaPrazos(S.prazosFeitos).filter(function (p) { return p.data === hoje; }).map(linhaPrazo)
       .concat(tarefas.filter(function (t) { return t.feita && t.feitaEm === hoje; }).map(linhaTarefa));
     var pend = abertos.filter(function (p) { return !p.data || p.data <= hoje; }).sort(porData).map(linhaPrazo)
       .concat(tarefas.filter(function (t) { return !t.feita && (!t.data || t.data <= hoje); }).sort(porData).map(linhaTarefa));
-    var am = abertos.filter(function (p) { return p.data === amanha; }).map(linhaPrazo)
+    var nAmanha = contarAgendamentos(amanha, amanha);
+    var am = (nAmanha ? [linhaPresidios(amanha, nAmanha)] : []).concat(abertos.filter(function (p) { return p.data === amanha; }).map(linhaPrazo))
       .concat(listaCompromissos().filter(function (c) { return c.data === amanha; }).sort(porHora).map(linhaCompromisso))
       .concat(tarefas.filter(function (t) { return t.data === amanha; }).map(linhaTarefa));
     box.append(
@@ -1031,7 +1150,7 @@ textarea.in { min-height: 46vh; line-height: 1.5; resize: vertical; }
   function renderSemana() {
     var box = $("semana-box");
     box.replaceChildren();
-    var sit = situacao(PRINCIPAIS);
+    var sit = situacao(PRINCIPAIS.concat(["agendamentos"]));
     if (sit !== "ok") { box.append(avisoCarga(sit, "a semana")); return; }
     var hoje = S.hoje, tarefas = listaTarefas(), comps = listaCompromissos(), prazos = listaPrazos(S.prazosAbertos), ex = extras();
     var atraso = prazos.filter(function (p) { return !p.data || p.data < hoje; }).sort(porData).map(linhaPrazo)
@@ -1039,7 +1158,8 @@ textarea.in { min-height: 46vh; line-height: 1.5; resize: vertical; }
     if (atraso.length) box.append(blocoDia("Em atraso", "", atraso, ""));
     for (var i = 0; i < 7; i++) {
       var dia = P.addDias(hoje, i), m = P.motivoSemExpediente(dia, ex);
-      var linhas = prazos.filter(function (p) { return p.data === dia; }).map(linhaPrazo)
+      var nPres = contarAgendamentos(dia, dia);
+      var linhas = (nPres ? [linhaPresidios(dia, nPres)] : []).concat(prazos.filter(function (p) { return p.data === dia; }).map(linhaPrazo))
         .concat(comps.filter(function (c) { return c.data === dia; }).sort(porHora).map(linhaCompromisso))
         .concat(tarefas.filter(function (t) { return t.data === dia; }).sort(function (a, b) { return (a.feita - b.feita) || cmpTexto(a.texto, b.texto); }).map(linhaTarefa));
       box.append(blocoDia((i === 0 ? "Hoje · " : i === 1 ? "Amanhã · " : "") + P.fmtLonga(dia), m && m !== "sábado" && m !== "domingo" ? m : "", linhas, "Nada marcado."));
@@ -1081,6 +1201,100 @@ textarea.in { min-height: 46vh; line-height: 1.5; resize: vertical; }
       }
       return li;
     }), "Nenhum dia cadastrado."));
+  }
+
+  /* ---------- Presídios ---------- */
+  function tituloSemana(seg, dom) {
+    var a = seg.split("-"), b = dom.split("-");
+    var fim = (+b[2]) + " de " + P.MESES[+b[1] - 1] + (b[0] !== S.hoje.slice(0, 4) ? " de " + b[0] : "");
+    return a[1] === b[1] ? (+a[2]) + " a " + fim : (+a[2]) + " de " + P.MESES[+a[1] - 1] + " a " + fim;
+  }
+  function mudarSemana(delta) {
+    var atual = P.inicioSemana(S.hoje), seg = P.addDias(S.semanaVista || atual, 7 * delta);
+    S.semanaVista = seg === atual ? "" : seg;
+    S.diaSel = "";
+    pedirRender();
+  }
+  function seta(rotulo, caminho, desligada, fn) {
+    var b = h("button", { type: "button", class: "icon-btn", "aria-label": rotulo, disabled: desligada, onclick: fn });
+    var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg"), path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    svg.setAttribute("viewBox", "0 0 24 24"); svg.setAttribute("width", "20"); svg.setAttribute("height", "20"); svg.setAttribute("fill", "none");
+    svg.setAttribute("stroke", "currentColor"); svg.setAttribute("stroke-width", "2.4"); svg.setAttribute("stroke-linecap", "round"); svg.setAttribute("stroke-linejoin", "round");
+    svg.setAttribute("aria-hidden", "true");
+    path.setAttribute("d", caminho);
+    svg.append(path); b.append(svg);
+    return b;
+  }
+  function renderPresidios() {
+    var hoje = S.hoje, atual = P.inicioSemana(hoje), seg = S.semanaVista || atual, dom = P.addDias(seg, 6);
+    var boxS = $("pres-semana"), boxD = $("pres-dia"), sit = situacao(["agendamentos"]);
+    boxS.replaceChildren(); boxD.replaceChildren();
+    $("pres-novo-btn").hidden = sit !== "ok";
+    if (sit !== "ok") {
+      S.diaMostrado = "";
+      $("pres-dia-titulo").textContent = "Agendamentos do dia";
+      boxS.append(avisoCarga(sit, "os agendamentos nos presídios"));
+      return;
+    }
+    var porDia = {}, total = 0, dias = [], i;
+    for (i = 0; i < 7; i++) dias.push(P.addDias(seg, i));
+    listaAgendamentos().forEach(function (a) { if (a.data >= seg && a.data <= dom) { porDia[a.data] = (porDia[a.data] || 0) + 1; total++; } });
+
+    var sel = S.diaSel >= seg && S.diaSel <= dom ? S.diaSel : "";
+    if (!sel) sel = hoje >= seg && hoje <= dom ? hoje : (dias.filter(function (d) { return porDia[d]; })[0] || seg);
+    S.diaMostrado = sel;
+
+    var faixa = h("div", { class: "dias" }, dias.map(function (dia) {
+      var n = porDia[dia] || 0;
+      return h("button", {
+        type: "button", class: "dia" + (n ? " tem" : "") + (dia === hoje ? " hoje" : ""), "aria-pressed": String(dia === sel),
+        "aria-label": P.fmtLonga(dia) + (dia === hoje ? ", hoje" : "") + ": " + (n ? P.plural(n, "agendamento") : "nenhum agendamento"),
+        onclick: function () { S.diaSel = dia; pedirRender(); }
+      },
+        h("span", { class: "dia-sem", text: P.DIAS_C[P.diaSemana(dia)].replace(".", "") }),
+        h("span", { class: "dia-num", text: String(+dia.slice(8)) }),
+        h("span", { class: "dia-n", text: n ? String(n) : "–" }));
+    }));
+    boxS.append(h("div", { class: "semana-card" },
+      h("div", { class: "semana-nav" },
+        seta("Semana anterior", "M15 6l-6 6 6 6", seg <= P.addDias(atual, -56), function () { mudarSemana(-1); }),
+        h("h3", { text: tituloSemana(seg, dom) }),
+        seta("Próxima semana", "M9 6l6 6-6 6", false, function () { mudarSemana(1); })),
+      faixa,
+      h("div", { class: "semana-pe" },
+        h("span", null, h("strong", { text: String(total) }), total === 1 ? " agendamento na semana" : " agendamentos na semana"),
+        seg !== atual ? h("button", { type: "button", class: "link-btn", text: "Voltar para esta semana", onclick: function () { S.semanaVista = ""; S.diaSel = ""; pedirRender(); } }) : null)));
+
+    var doDia = agendamentosDe(sel);
+    $("pres-dia-titulo").replaceChildren(cap(P.fmtLonga(sel)) + (sel === hoje ? " · hoje" : ""), doDia.length ? h("span", { class: "n", text: String(doDia.length) }) : "");
+    boxD.append(listaOuVazio(doDia.map(linhaAgendamento), "Nenhum agendamento neste dia."));
+    $("pres-novo-btn").textContent = "Agendar para " + quando(sel);
+  }
+  /* Sugestões de presídio no formulário: os nomes já usados nos agendamentos carregados. */
+  function atualizarPresidios() {
+    var nomes = {};
+    S.agendamentos.forEach(function (v) { var n = str(v.presidio).trim(); if (n) nomes[n] = true; });
+    var lista = Object.keys(nomes).sort(cmpTexto), chave = lista.join("\n");
+    if (chave === S.presidiosChave) return;
+    S.presidiosChave = chave;
+    $("lista-presidios").replaceChildren.apply($("lista-presidios"), lista.map(function (n) { return h("option", { value: n }); }));
+  }
+  function avisoConflito() {
+    var el = $("c-a-aviso"), data = val("c-a-data"), ini = val("c-a-inicio").slice(0, 5), fim = val("c-a-fim").slice(0, 5), msg = "";
+    if (P.isISO(data) && horaValida(ini)) {
+      var a1 = minutos(ini), a2 = horaValida(fim) && fim > ini ? minutos(fim) : a1 + 1;
+      var choque = agendamentosDe(data).filter(function (o) {
+        if (S.edit && S.edit.col === "agendamentos" && S.edit.id === o.id) return false;
+        if (!o.inicio) return false;
+        var b1 = minutos(o.inicio), b2 = o.fim && o.fim > o.inicio ? minutos(o.fim) : b1 + 1;
+        return a1 < b2 && b1 < a2;
+      });
+      if (choque.length) {
+        msg = "Já há agendamento nesse horário: " + choque.map(function (o) { return o.nome + ", " + P.fmtFaixa(o.inicio, o.fim) + (o.presidio ? ", " + o.presidio : ""); }).join("; ") + ".";
+      }
+    }
+    el.textContent = msg;
+    el.hidden = !msg;
   }
 
   /* ---------- Notas ---------- */
@@ -1162,15 +1376,17 @@ textarea.in { min-height: 46vh; line-height: 1.5; resize: vertical; }
     $("f-tarefas").hidden = col !== "tarefas";
     $("f-compromissos").hidden = col !== "compromissos";
     $("f-prazos").hidden = col !== "prazos";
+    $("f-agendamentos").hidden = col !== "agendamentos";
     $("c-p-modos").hidden = editando;
     $("f-prazo-calc").hidden = manual;
     $("f-prazo-manual").hidden = !manual;
     $("compose-titulo").textContent = editando ? "Editar " + NOME[col] : "Anotar";
-    $("compose-salvar").textContent = editando ? "Salvar alterações" : col === "tarefas" ? "Anotar tarefa" : col === "compromissos" ? "Anotar compromisso" : "Gravar prazo";
+    $("compose-salvar").textContent = editando ? "Salvar alterações" : col === "tarefas" ? "Anotar tarefa" : col === "compromissos" ? "Anotar compromisso" : col === "agendamentos" ? "Agendar" : "Gravar prazo";
     $("compose-excluir").hidden = !editando;
     $("compose-confirma").hidden = true;
     erroCompose("");
     if (col === "prazos" && !manual) atualizarCalc();
+    if (col === "agendamentos") avisoConflito();
   }
   function mostrarCompose(foco) {
     var painel = $("compose");
@@ -1186,12 +1402,15 @@ textarea.in { min-height: 46vh; line-height: 1.5; resize: vertical; }
     if (modo) $("c-p-modo-" + modo).checked = true;
     $("c-t-data").value = S.hoje;
     $("c-c-data").value = S.hoje;
+    $("c-a-data").value = S.view === "presidios" && S.diaMostrado ? S.diaMostrado : S.hoje;
+    $("c-a-fim").dataset.auto = "";
     ajustarCompose();
-    mostrarCompose(col === "tarefas" ? "c-t-texto" : col === "compromissos" ? "c-c-titulo" : null);
+    mostrarCompose(col === "tarefas" ? "c-t-texto" : col === "compromissos" ? "c-c-titulo" : col === "agendamentos" ? "c-a-nome" : null);
   }
   function abrirEdicao(col, id) {
     var v = col === "tarefas" ? (S.tarefasPend.get(id) || S.tarefasFeitas.get(id))
       : col === "compromissos" ? S.compromissos.get(id)
+      : col === "agendamentos" ? S.agendamentos.get(id)
       : (S.prazosAbertos.get(id) || S.prazosFeitos.get(id));
     if (!v) { alerta("Este item não está mais na agenda."); return; }
     S.edit = { col: col, id: id };
@@ -1200,6 +1419,9 @@ textarea.in { min-height: 46vh; line-height: 1.5; resize: vertical; }
     else if (col === "compromissos") {
       $("c-c-titulo").value = str(v.titulo); $("c-c-data").value = P.isISO(v.data) ? v.data : "";
       $("c-c-hora").value = /^\d{2}:\d{2}$/.test(str(v.hora)) ? v.hora : ""; $("c-c-local").value = str(v.local);
+    } else if (col === "agendamentos") {
+      $("c-a-nome").value = str(v.nome); $("c-a-presidio").value = str(v.presidio); $("c-a-data").value = P.isISO(v.data) ? v.data : "";
+      $("c-a-inicio").value = horaValida(v.inicio); $("c-a-fim").value = horaValida(v.fim); $("c-a-fim").dataset.auto = "";
     } else { $("c-p-titulo").value = str(v.titulo); $("c-p-data").value = P.isISO(v.data) ? v.data : ""; }
     ajustarCompose();
     mostrarCompose(null);
@@ -1218,6 +1440,15 @@ textarea.in { min-height: 46vh; line-height: 1.5; resize: vertical; }
       else if (!P.isISO(dados.data)) erro = "Informe a data do compromisso.";
       else if (dados.hora && !/^\d{2}:\d{2}$/.test(dados.hora)) erro = "Hora inválida. Use HH:MM ou deixe em branco.";
       else ok = "Compromisso anotado para " + quando(dados.data) + (dados.hora ? ", às " + dados.hora : "") + ".";
+    } else if (col === "agendamentos") {
+      dados = { nome: val("c-a-nome"), data: val("c-a-data"), inicio: val("c-a-inicio").slice(0, 5), fim: val("c-a-fim").slice(0, 5), presidio: val("c-a-presidio") };
+      if (!dados.nome) erro = "Escreva o nome do cliente.";
+      else if (!dados.presidio) erro = "Informe o presídio.";
+      else if (!P.isISO(dados.data)) erro = "Informe a data do agendamento.";
+      else if (!horaValida(dados.inicio)) erro = "Informe o horário de início.";
+      else if (dados.fim && !horaValida(dados.fim)) erro = "Horário final inválido. Use HH:MM ou deixe em branco.";
+      else if (dados.fim && dados.fim <= dados.inicio) erro = "O horário final precisa ser depois do início.";
+      else ok = "Agendado: " + dados.nome + ", " + quando(dados.data) + ", " + P.fmtFaixa(dados.inicio, dados.fim) + ".";
     } else if (!editando && $("c-p-modo-calc").checked) {
       var c = lerCalc(), r;
       if (c.vazio) erro = "Escolha o recurso ou a peça.";
@@ -1257,6 +1488,11 @@ textarea.in { min-height: 46vh; line-height: 1.5; resize: vertical; }
       if (!deu) return;
       fecharCompose();
       if (!editando && col === "prazos") irPara("prazos");
+      if (col === "agendamentos") {
+        S.semanaVista = P.inicioSemana(dados.data) !== P.inicioSemana(S.hoje) ? P.inicioSemana(dados.data) : "";
+        S.diaSel = dados.data;
+        if (editando) pedirRender(); else irPara("presidios");
+      }
     });
   }
   function excluirEditado() {
@@ -1291,7 +1527,9 @@ textarea.in { min-height: 46vh; line-height: 1.5; resize: vertical; }
     if (S.view === "hoje") renderHoje();
     else if (S.view === "semana") renderSemana();
     else if (S.view === "prazos") renderPrazos();
+    else if (S.view === "presidios") renderPresidios();
     else renderNotas();
+    atualizarPresidios();
     if (!$("compose").hidden && !S.edit && tipoMarcado() === "prazos" && $("c-p-modo-calc").checked) atualizarCalc();
   }
   function conferirDia() {
@@ -1331,7 +1569,20 @@ textarea.in { min-height: 46vh; line-height: 1.5; resize: vertical; }
       a.addEventListener("click", function (ev) { ev.preventDefault(); irPara(a.getAttribute("data-view")); });
     });
     window.addEventListener("hashchange", function () { var v = lerHash(); if (v !== S.view) mostrar(v); });
-    $("add-btn").addEventListener("click", function () { abrirNovo(S.view === "prazos" ? "prazos" : "tarefas"); });
+    $("add-btn").addEventListener("click", function () { abrirNovo(S.view === "prazos" ? "prazos" : S.view === "presidios" ? "agendamentos" : "tarefas"); });
+    $("hoje-pres-btn").addEventListener("click", function () { verPresidios(""); });
+    $("pres-novo-btn").addEventListener("click", function () { abrirNovo("agendamentos"); });
+    $("c-a-inicio").addEventListener("change", function () {
+      var ini = this.value.slice(0, 5), fim = $("c-a-fim"), m;
+      if (horaValida(ini) && (!fim.value || fim.dataset.auto === "1")) {
+        m = Math.min(minutos(ini) + 30, 23 * 60 + 59);
+        fim.value = String(Math.floor(m / 60)).padStart(2, "0") + ":" + String(m % 60).padStart(2, "0");
+        fim.dataset.auto = "1";
+      }
+      avisoConflito();
+    });
+    $("c-a-fim").addEventListener("input", function () { this.dataset.auto = ""; avisoConflito(); });
+    $("c-a-data").addEventListener("change", avisoConflito);
     $("hoje-calc-btn").addEventListener("click", function () { abrirNovo("prazos", "calc"); });
     $("prazos-calc-btn").addEventListener("click", function () { abrirNovo("prazos", "calc"); });
     $("hoje-comp-btn").addEventListener("click", function () { abrirNovo("compromissos"); });

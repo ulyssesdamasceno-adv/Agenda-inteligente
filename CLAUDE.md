@@ -18,24 +18,27 @@ Definidos pelo Dr. Ulysses:
 - `compromissos`: `titulo`, `data`, `hora` (HH:MM ou `""`), `local` (ou `""`)
 - `prazos`: `titulo`, `data` (o vencimento), `feito` (true/false)
 - `notas`, documento `texto`: campo `texto`
+- `agendamentos` (atendimentos dos clientes nos presídios, pedido em 22/11/2026): `nome` (do cliente), `data`, `inicio` (HH:MM), `fim` (HH:MM ou `""`), `presidio`
 
 Acrescentado pelo Claude para o cálculo de prazos (avisado ao Doutor):
 
 - `feriados`: `data`, `descricao`. São os dias sem expediente no tribunal (feriado local, ponto facultativo, suspensão de expediente).
 
-Grave sempre todos os campos do grupo, com os tipos acima. A página lê `tarefas` por `feita == false` e `feitaEm >= data`, e `prazos` por `feito == false`: um item sem esses campos não aparece.
+Grave sempre todos os campos do grupo, com os tipos acima. A página lê `tarefas` por `feita == false` e `feitaEm >= data`, e `prazos` por `feito == false`: um item sem esses campos não aparece. `agendamentos` é lido por `data >=` oito semanas atrás.
 
 ## O que o Doutor pode pedir
 
 - "anota ..." = grave um item novo no grupo certo e confirme em uma linha
-- "hoje" = prazos próximos, compromissos de hoje por horário, tarefas de hoje e pendentes, e uma sugestão de ordem
+- "hoje" = prazos próximos, compromissos de hoje por horário, tarefas de hoje e pendentes, e uma sugestão de ordem. Dos presídios, diga só quantos agendamentos há hoje e na semana corrente, sem nomes nem horários (o Doutor pediu: "só o número... sem adentrar nas informações")
+- agendamentos nos presídios = quando o Doutor pedir os agendamentos, liste dia por dia: nome, horário no formato "08h até 08:30h" e presídio. Para anotar um, grave em `agendamentos`; se faltar data, horário ou presídio, pergunte
 - "prazos" = prazos em aberto, do mais próximo ao mais distante
-- "semana" = os próximos 7 dias, dia por dia
+- "semana" = os próximos 7 dias, dia por dia (dos presídios, só a quantidade de cada dia)
 - "fechar o dia" = o que foi feito, o que ficou pendente e o que há amanhã
 
 ## Regras
 
 - Não invente compromisso, data, hora ou prazo. Se faltar data ou hora, pergunte.
+- A semana corrente dos agendamentos vai de segunda a domingo (escolha do Claude, avisada ao Doutor; a página usa `Prazos.inicioSemana`).
 - "Hoje" é a data no horário de Brasília (suposição do Claude; o Doutor não informou o fuso): `TZ=America/Sao_Paulo date +%F`. A página usa a data do aparelho.
 - Antes de alterar ou apagar um item que já existe, leia o item. Nunca apague nada sem o Doutor pedir. Nunca apague a página.
 - Não compartilhe a agenda, não envie nada e não use serviços pagos.
