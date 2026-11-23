@@ -18,7 +18,7 @@ Definidos pelo Dr. Ulysses:
 - `compromissos`: `titulo`, `data`, `hora` (HH:MM ou `""`), `local` (ou `""`)
 - `prazos`: `titulo`, `data` (o vencimento), `feito` (true/false)
 - `notas`, documento `texto`: campo `texto`
-- `agendamentos` (atendimentos dos clientes nos presídios, pedido em 22/11/2026): `nome` (do cliente), `data`, `inicio` (HH:MM), `fim` (HH:MM ou `""`), `presidio`, `pago` (true/false; pedido em 23/11/2026: linha verde se pago, vermelha se não pago)
+- `agendamentos` (atendimentos dos clientes nos presídios, pedido em 22/11/2026): `nome` (do cliente), `data`, `inicio` (HH:MM), `fim` (HH:MM ou `""`), `presidio`, `pago` (true/false; pedido em 22/11/2026: linha verde se pago, vermelha se não pago)
 
 Acrescentado pelo Claude para o cálculo de prazos (avisado ao Doutor):
 
@@ -29,7 +29,7 @@ Grave sempre todos os campos do grupo, com os tipos acima. A página lê `tarefa
 ## O que o Doutor pode pedir
 
 - "anota ..." = grave um item novo no grupo certo e confirme em uma linha
-- O Doutor quer a conversa enxuta (pedido em 23/11/2026: "sem encher a conversa de mensagem"). Aceite vários itens numa mensagem só, grave todos e confirme o lote em uma linha, sem repetir os itens; só escreva mais se faltar dado ou algo falhar
+- O Doutor quer a conversa enxuta (pedido em 22/11/2026: "sem encher a conversa de mensagem"). Aceite vários itens numa mensagem só, grave todos e confirme o lote em uma linha, sem repetir os itens; só escreva mais se faltar dado ou algo falhar
 - "hoje" = prazos próximos, compromissos de hoje por horário, tarefas de hoje e pendentes, e uma sugestão de ordem. Dos presídios, diga só quantos agendamentos há hoje e na semana corrente, sem nomes nem horários (o Doutor pediu: "só o número... sem adentrar nas informações")
 - agendamentos nos presídios = quando o Doutor pedir os agendamentos, liste dia por dia: nome, horário no formato "08h até 08:30h" e presídio. Para anotar um, grave em `agendamentos`; se faltar data, horário ou presídio, pergunte. Se o Doutor não disser se está pago, grave `pago: false` e diga na confirmação que ficou como não pago (padrão escolhido pelo Claude, igual ao do formulário)
 - "prazos" = prazos em aberto, do mais próximo ao mais distante
@@ -43,8 +43,8 @@ Grave sempre todos os campos do grupo, com os tipos acima. A página lê `tarefa
 - "Hoje" é a data no horário de Brasília (suposição do Claude; o Doutor não informou o fuso): `TZ=America/Sao_Paulo date +%F`. A página usa a data do aparelho.
 - Antes de alterar ou apagar um item que já existe, leia o item. Nunca apague nada sem o Doutor pedir. Nunca apague a página.
 - Não compartilhe a agenda, não envie nada e não use serviços pagos.
-- O repositório no GitHub é público. Em 23/11/2026 o Doutor autorizou enviar o código para lá ("Pode enviar tudo"), sabendo que vão o código da página, a logo e este arquivo. O Claude entende que isso vale também para as próximas atualizações do código, no ramo da sessão, e avisou o Doutor. Dados da agenda (tarefas, prazos, clientes, link da página) nunca vão para o repositório.
-- Em 23/11/2026 o Doutor pediu "pode juntar no principal": o código e estas instruções passaram a ficar no ramo principal, para que uma conversa nova já comece sabendo as regras. Depois de mudar a página numa sessão, pergunte em uma linha se pode juntar no principal de novo; pull request e merge só com o pedido dele.
+- O repositório no GitHub é público. Em 22/11/2026 o Doutor autorizou enviar o código para lá ("Pode enviar tudo"), sabendo que vão o código da página, a logo e este arquivo. O Claude entende que isso vale também para as próximas atualizações do código, no ramo da sessão, e avisou o Doutor. Dados da agenda (tarefas, prazos, clientes, link da página) nunca vão para o repositório.
+- Em 22/11/2026 o Doutor pediu "pode juntar no principal": o código e estas instruções passaram a ficar no ramo principal, para que uma conversa nova já comece sabendo as regras. No mesmo dia ele disse "Juntar sempre": depois de cada mudança no código ou nestas instruções, envie ao ramo da sessão, abra o pull request e junte no principal sem perguntar, e avise em uma linha que juntou. Interpretação do Claude: vale só para este repositório e nunca inclui dados da agenda.
 
 ## Prazos processuais
 
