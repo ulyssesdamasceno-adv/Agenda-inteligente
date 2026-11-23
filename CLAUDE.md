@@ -18,7 +18,7 @@ Definidos pelo Dr. Ulysses:
 - `compromissos`: `titulo`, `data`, `hora` (HH:MM ou `""`), `local` (ou `""`)
 - `prazos`: `titulo`, `data` (o vencimento), `feito` (true/false)
 - `notas`, documento `texto`: campo `texto`
-- `agendamentos` (atendimentos dos clientes nos presídios, pedido em 22/11/2026): `nome` (do cliente), `data`, `inicio` (HH:MM), `fim` (HH:MM ou `""`), `presidio`, `pago` (true/false; pedido em 22/11/2026: linha verde se pago, vermelha se não pago)
+- `agendamentos` (atendimentos dos clientes nos presídios, pedido em 22/11/2026): `nome` (do cliente), `data`, `inicio` (HH:MM), `fim` (HH:MM ou `""`), `presidio`, `situacao` (`"pago"`, `"nao_pago"` ou `"a_confirmar"`; pedido em 22/11/2026: linha verde se pago, vermelha se não pago, amarela se a confirmar) e `pago` (true só quando `situacao` é `"pago"`; agendamentos antigos têm só este campo)
 
 - `presidios` (pedido em 22/11/2026): `nome`. São os presídios que o Doutor acrescentou à lista de escolha. A lista fixa, definida por ele, está em `agenda.html` (`PRESIDIOS`): CPPL 1 a CPPL 7, PACATUBA, IPPOO II, CTOC, AQUIRAZ, UPF e IMELDA
 
@@ -33,7 +33,7 @@ Grave sempre todos os campos do grupo, com os tipos acima. A página lê `tarefa
 - "anota ..." = grave um item novo no grupo certo e confirme em uma linha
 - O Doutor quer a conversa enxuta (pedido em 22/11/2026: "sem encher a conversa de mensagem"). Aceite vários itens numa mensagem só, grave todos e confirme o lote em uma linha, sem repetir os itens; só escreva mais se faltar dado ou algo falhar
 - "hoje" = prazos próximos, compromissos de hoje por horário, tarefas de hoje e pendentes, e uma sugestão de ordem. Dos presídios, diga só quantos agendamentos há hoje e na semana corrente, sem nomes nem horários (o Doutor pediu: "só o número... sem adentrar nas informações")
-- agendamentos nos presídios = quando o Doutor pedir os agendamentos, liste dia por dia: nome, horário no formato "08h até 08:30h" e presídio. Para anotar um, grave em `agendamentos`; se faltar data, horário ou presídio, pergunte. Grave `presidio` com a grafia da lista ("cppl 3" vira "CPPL 3"); se for um presídio fora da lista fixa e do grupo `presidios`, grave-o também em `presidios` e diga isso na confirmação. Se o Doutor não disser se está pago, grave `pago: false` e diga na confirmação que ficou como não pago (padrão escolhido pelo Claude, igual ao do formulário)
+- agendamentos nos presídios = quando o Doutor pedir os agendamentos, liste dia por dia: nome, horário no formato "08h até 08:30h" e presídio. Para anotar um, grave em `agendamentos`; se faltar data, horário ou presídio, pergunte. Grave `presidio` com a grafia da lista ("cppl 3" vira "CPPL 3"); se for um presídio fora da lista fixa e do grupo `presidios`, grave-o também em `presidios` e diga isso na confirmação. Se o Doutor não disser a situação, grave `situacao: "nao_pago"` e `pago: false` e diga na confirmação que ficou como não pago (padrão escolhido pelo Claude, igual ao do formulário). Ao mudar a situação de um agendamento, grave os dois campos juntos
 - "prazos" = prazos em aberto, do mais próximo ao mais distante
 - "semana" = os próximos 7 dias, dia por dia (dos presídios, só a quantidade de cada dia)
 - "fechar o dia" = o que foi feito, o que ficou pendente e o que há amanhã
