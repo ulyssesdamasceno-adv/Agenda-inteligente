@@ -262,6 +262,8 @@ textarea.in { min-height: 46vh; line-height: 1.5; resize: vertical; }
 .dia[aria-pressed="true"].tem .dia-n { background: var(--on-action); color: var(--action); }
 .semana-pe { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 4px 12px; min-height: 40px; margin-top: 10px; padding: 8px 4px 0; border-top: 1px solid var(--line-soft); font-size: 14px; color: var(--muted); }
 .semana-pe strong { color: var(--ink); font-variant-numeric: tabular-nums; }
+.depois-btn { display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 100%; min-height: 46px; margin-top: 8px; padding: 8px 10px 8px 12px; border: 1.5px solid var(--gold); border-radius: 12px; background: transparent; color: var(--ink); font-size: 14.5px; text-align: left; cursor: pointer; }
+.depois-btn strong { font-variant-numeric: tabular-nums; }
 .row.is-faixa { grid-template-columns: 84px minmax(0, 1fr) auto; margin-top: 6px; padding: 0 8px 0 12px; border-bottom: 0; border-radius: 12px; }
 .row.is-faixa.pago { background: var(--pago-bg); }
 .row.is-faixa.devendo { background: var(--devendo-bg); }
@@ -576,8 +578,8 @@ textarea.in { min-height: 46vh; line-height: 1.5; resize: vertical; }
   function fmtDia(iso) { return DIAS_C[diaSemana(iso)] + " " + fmtDiaMes(iso); }
   function fmtLonga(iso) { var p = iso.split("-"); return DIAS[diaSemana(iso)] + ", " + (+p[2]) + " de " + MESES[+p[1] - 1]; }
   function plural(n, um, varios) { return n + " " + (n === 1 ? um : (varios || um + "s")); }
-  /* A semana da agenda vai de segunda a domingo: devolve a segunda-feira da semana da data. */
-  function inicioSemana(iso) { return addDias(iso, -((diaSemana(iso) + 6) % 7)); }
+  /* A semana da agenda vai de domingo a sábado, como no calendário do iPhone: devolve o domingo da semana da data. */
+  function inicioSemana(iso) { return addDias(iso, -diaSemana(iso)); }
   /* "08:00" vira "08h"; "08:30" vira "08:30h"; a faixa fica "08h até 08:30h". */
   function fmtHora(hhmm) { return /^\d{2}:\d{2}$/.test(hhmm || "") ? (hhmm.slice(3) === "00" ? hhmm.slice(0, 2) + "h" : hhmm + "h") : ""; }
   function fmtFaixa(inicio, fim) { var a = fmtHora(inicio), b = fmtHora(fim); return a && b ? a + " até " + b : a || b; }
@@ -1222,12 +1224,14 @@ textarea.in { min-height: 46vh; line-height: 1.5; resize: vertical; }
     sit = situacao(["agendamentos"]);
     if (sit !== "ok") box.append(avisoCarga(sit, "os agendamentos nos presídios"));
     else {
-      var seg = P.inicioSemana(hoje), dom = P.addDias(seg, 6);
+      var ini = P.inicioSemana(hoje), ult = P.addDias(ini, 6);
       box.append(h("div", { class: "stats" },
         h("button", { type: "button", class: "stat", onclick: function () { verPresidios(S.hoje); } },
           h("span", { class: "stat-n", text: String(contarAgendamentos(hoje, hoje)) }), h("span", { class: "stat-l", text: "hoje" })),
         h("button", { type: "button", class: "stat", onclick: function () { verPresidios(""); } },
-          h("span", { class: "stat-n", text: String(contarAgendamentos(seg, dom)) }), h("span", { class: "stat-l", text: "nesta semana, de " + P.fmtDiaMes(seg) + " a " + P.fmtDiaMes(dom) }))));
+          h("span", { class: "stat-n", text: String(contarAgendamentos(ini, ult)) }), h("span", { class: "stat-l", text: "nesta semana, de " + P.fmtDiaMes(ini) + " a " + P.fmtDiaMes(ult) }))));
+      var nDepois = contarAgendamentos(P.addDias(ult, 1), "9999-12-31");
+      if (nDepois) box.append(h("p", { class: "note", text: "Depois desta semana: " + P.plural(nDepois, "agendamento") + "." }));
     }
 
     box = $("hoje-comps"); box.replaceChildren(); $("hoje-comps-n").textContent = "";
@@ -1336,14 +1340,14 @@ textarea.in { min-height: 46vh; line-height: 1.5; resize: vertical; }
   }
 
   /* ---------- Presídios ---------- */
-  function tituloSemana(seg, dom) {
-    var a = seg.split("-"), b = dom.split("-");
+  function tituloSemana(ini, ult) {
+    var a = ini.split("-"), b = ult.split("-");
     var fim = (+b[2]) + " de " + P.MESES[+b[1] - 1] + (b[0] !== S.hoje.slice(0, 4) ? " de " + b[0] : "");
     return a[1] === b[1] ? (+a[2]) + " a " + fim : (+a[2]) + " de " + P.MESES[+a[1] - 1] + " a " + fim;
   }
   function mudarSemana(delta) {
-    var atual = P.inicioSemana(S.hoje), seg = P.addDias(S.semanaVista || atual, 7 * delta);
-    S.semanaVista = seg === atual ? "" : seg;
+    var atual = P.inicioSemana(S.hoje), ini = P.addDias(S.semanaVista || atual, 7 * delta);
+    S.semanaVista = ini === atual ? "" : ini;
     S.diaSel = "";
     pedirRender();
   }
@@ -1358,7 +1362,7 @@ textarea.in { min-height: 46vh; line-height: 1.5; resize: vertical; }
     return b;
   }
   function renderPresidios() {
-    var hoje = S.hoje, atual = P.inicioSemana(hoje), seg = S.semanaVista || atual, dom = P.addDias(seg, 6);
+    var hoje = S.hoje, atual = P.inicioSemana(hoje), ini = S.semanaVista || atual, ult = P.addDias(ini, 6);
     var boxS = $("pres-semana"), boxD = $("pres-dia"), sit = situacao(["agendamentos"]);
     boxS.replaceChildren(); boxD.replaceChildren();
     $("pres-novo-btn").hidden = sit !== "ok";
@@ -1371,11 +1375,15 @@ textarea.in { min-height: 46vh; line-height: 1.5; resize: vertical; }
       return;
     }
     var porDia = {}, total = 0, dias = [], i;
-    for (i = 0; i < 7; i++) dias.push(P.addDias(seg, i));
-    listaAgendamentos().forEach(function (a) { if (a.data >= seg && a.data <= dom) { porDia[a.data] = (porDia[a.data] || 0) + 1; total++; } });
+    for (i = 0; i < 7; i++) dias.push(P.addDias(ini, i));
+    var nDepois = 0, proximo = "";
+    listaAgendamentos().forEach(function (a) {
+      if (a.data >= ini && a.data <= ult) { porDia[a.data] = (porDia[a.data] || 0) + 1; total++; }
+      else if (a.data > ult) { nDepois++; if (!proximo || a.data < proximo) proximo = a.data; }
+    });
 
-    var sel = S.diaSel >= seg && S.diaSel <= dom ? S.diaSel : "";
-    if (!sel) sel = hoje >= seg && hoje <= dom ? hoje : (dias.filter(function (d) { return porDia[d]; })[0] || seg);
+    var sel = S.diaSel >= ini && S.diaSel <= ult ? S.diaSel : "";
+    if (!sel) sel = hoje >= ini && hoje <= ult ? hoje : (dias.filter(function (d) { return porDia[d]; })[0] || ini);
     S.diaMostrado = sel;
 
     var faixa = h("div", { class: "dias" }, dias.map(function (dia) {
@@ -1391,13 +1399,18 @@ textarea.in { min-height: 46vh; line-height: 1.5; resize: vertical; }
     }));
     boxS.append(h("div", { class: "semana-card" },
       h("div", { class: "semana-nav" },
-        seta("Semana anterior", "M15 6l-6 6 6 6", seg <= P.addDias(atual, -56), function () { mudarSemana(-1); }),
-        h("h3", { text: tituloSemana(seg, dom) }),
+        seta("Semana anterior", "M15 6l-6 6 6 6", ini <= P.addDias(atual, -56), function () { mudarSemana(-1); }),
+        h("h3", { text: tituloSemana(ini, ult) }),
         seta("Próxima semana", "M9 6l6 6-6 6", false, function () { mudarSemana(1); })),
       faixa,
       h("div", { class: "semana-pe" },
         h("span", null, h("strong", { text: String(total) }), total === 1 ? " agendamento na semana" : " agendamentos na semana"),
-        seg !== atual ? h("button", { type: "button", class: "link-btn", text: "Voltar para esta semana", onclick: function () { S.semanaVista = ""; S.diaSel = ""; pedirRender(); } }) : null)));
+        ini !== atual ? h("button", { type: "button", class: "link-btn", text: "Voltar para esta semana", onclick: function () { S.semanaVista = ""; S.diaSel = ""; pedirRender(); } }) : null),
+      nDepois ? h("button", {
+        type: "button", class: "depois-btn",
+        onclick: function () { S.semanaVista = P.inicioSemana(proximo) === atual ? "" : P.inicioSemana(proximo); S.diaSel = proximo; pedirRender(); }
+      }, h("span", null, h("strong", { text: String(nDepois) }), nDepois === 1 ? " agendamento depois desta semana" : " agendamentos depois desta semana"),
+        h("span", { class: "chip", text: "ver" })) : null));
 
     if (S.presModo === "semana") {
       $("pres-dia-titulo").replaceChildren("Semana toda", total ? h("span", { class: "n", text: String(total) }) : "");
@@ -1414,7 +1427,7 @@ textarea.in { min-height: 46vh; line-height: 1.5; resize: vertical; }
     }
     var doDia = agendamentosDe(sel);
     $("pres-dia-titulo").replaceChildren(cap(P.fmtLonga(sel)) + (sel === hoje ? " · hoje" : ""), doDia.length ? h("span", { class: "n", text: String(doDia.length) }) : "");
-    boxD.append(listaOuVazio(doDia.map(linhaAgendamento), "Nenhum agendamento neste dia."));
+    boxD.append(listaOuVazio(doDia.map(linhaAgendamento), total ? "Nenhum agendamento neste dia. Toque num dia com número, ou em “Semana toda”, para ver os da semana." : "Nenhum agendamento neste dia."));
     $("pres-novo-btn").textContent = "Agendar para " + quando(sel);
   }
   function atualizarPresidios() {

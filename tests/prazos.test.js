@@ -71,11 +71,12 @@ assert.strictEqual(P.restante("2026-11-27", "2026-11-19").texto, "faltam 8 dias"
 assert.strictEqual(P.restante("2026-11-19", "2026-11-19").texto, "vence hoje");
 assert.strictEqual(P.restante("2026-11-17", "2026-11-19").texto, "venceu há 2 dias");
 
-// Semana (segunda a domingo) e horário dos agendamentos nos presídios
-assert.strictEqual(P.inicioSemana("2026-11-23"), "2026-11-23");
-assert.strictEqual(P.inicioSemana("2026-11-29"), "2026-11-23");
-assert.strictEqual(P.inicioSemana("2026-11-22"), "2026-11-16");
-assert.strictEqual(P.inicioSemana("2027-01-01"), "2026-12-28");
+// Semana (domingo a sábado) e horário dos agendamentos nos presídios
+assert.strictEqual(P.inicioSemana("2026-11-22"), "2026-11-22");
+assert.strictEqual(P.inicioSemana("2026-11-23"), "2026-11-22");
+assert.strictEqual(P.inicioSemana("2026-11-28"), "2026-11-22");
+assert.strictEqual(P.inicioSemana("2026-11-29"), "2026-11-29");
+assert.strictEqual(P.inicioSemana("2027-01-01"), "2026-12-27");
 assert.strictEqual(P.fmtHora("08:00"), "08h");
 assert.strictEqual(P.fmtHora("08:30"), "08:30h");
 assert.strictEqual(P.fmtHora(""), "");
