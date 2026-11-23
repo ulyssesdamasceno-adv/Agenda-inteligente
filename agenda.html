@@ -167,6 +167,8 @@ button { -webkit-tap-highlight-color: transparent; }
 .empty { margin: 0; padding: 14px 0; font-size: 15px; color: var(--muted); }
 .empty-crit { color: var(--crit); font-weight: 600; }
 .note { margin: 0; padding: 10px 0 0; font-size: 14px; color: var(--muted); }
+.sub-head .n { margin-left: 6px; color: var(--accent-ink); font-variant-numeric: tabular-nums; }
+.pres-head { margin-top: 14px; }
 .sub-head { margin: 18px 0 0; padding-bottom: 6px; border-bottom: 1px solid var(--line-soft); font-size: 14.5px; font-weight: 700; }
 .sec-head h2 .day-tag { margin-left: 8px; letter-spacing: 0; text-transform: none; }
 
@@ -375,7 +377,8 @@ textarea.in { min-height: 46vh; line-height: 1.5; resize: vertical; }
 
       <div class="fields" id="f-agendamentos" hidden>
         <div class="field"><label for="c-a-nome">Nome do cliente</label><input class="in" id="c-a-nome" type="text" maxlength="200" autocomplete="off" autocapitalize="words"></div>
-        <div class="field"><label for="c-a-presidio">Presídio</label><input class="in" id="c-a-presidio" type="text" maxlength="200" autocomplete="off" list="lista-presidios"><datalist id="lista-presidios"></datalist></div>
+        <div class="field"><label for="c-a-presidio">Presídio</label><select class="in" id="c-a-presidio"></select></div>
+        <div class="field" id="c-a-novo-campo" hidden><label for="c-a-presidio-novo">Nome do novo presídio</label><input class="in" id="c-a-presidio-novo" type="text" maxlength="80" autocomplete="off" autocapitalize="characters"></div>
         <div class="field"><label for="c-a-data">Data</label><input class="in" id="c-a-data" type="date"></div>
         <div class="pair">
           <div class="field"><label for="c-a-inicio">Das</label><input class="in hora-in" id="c-a-inicio" type="text" inputmode="numeric" autocomplete="off" placeholder="hh:mm"></div>
@@ -506,7 +509,11 @@ textarea.in { min-height: 46vh; line-height: 1.5; resize: vertical; }
       <div id="pres-semana"></div>
     </div>
     <div class="sec">
-      <div class="sec-head"><h2 id="pres-dia-titulo">Agendamentos do dia</h2></div>
+      <div class="seg" id="pres-modo" role="radiogroup" aria-label="O que a lista mostra">
+        <label><input type="radio" name="pres-modo" id="pres-modo-dia" value="dia" checked><span>Dia escolhido</span></label>
+        <label><input type="radio" name="pres-modo" id="pres-modo-semana" value="semana"><span>Semana toda</span></label>
+      </div>
+      <div class="sec-head pres-head"><h2 id="pres-dia-titulo">Agendamentos do dia</h2></div>
       <div id="pres-dia"></div>
       <div class="actions"><button type="button" class="btn btn-primary" id="pres-novo-btn">Agendar</button></div>
     </div>
@@ -755,13 +762,16 @@ textarea.in { min-height: 46vh; line-height: 1.5; resize: vertical; }
   var VIEWS = ["hoje", "semana", "prazos", "presidios", "notas"];
   var NOME = { tarefas: "tarefa", compromissos: "compromisso", prazos: "prazo", agendamentos: "agendamento" };
   var PRINCIPAIS = ["tarefasPend", "tarefasFeitas", "compromissos", "prazosAbertos"];
+  /* Presídios que já vêm na lista de escolha. Os acrescentados pelo Doutor ficam no grupo "presidios". */
+  var PRESIDIOS = ["CPPL 1", "CPPL 2", "CPPL 3", "CPPL 4", "CPPL 5", "CPPL 6", "CPPL 7", "PACATUBA", "IPPOO II", "CTOC", "AQUIRAZ", "UPF", "IMELDA"];
+  var NOVO = "__novo__";
 
   var S = {
     hoje: P.hojeISO(), view: "hoje", db: null, semDados: false, negado: false, dono: null, donoSabido: false, notasExiste: null,
     atrasou: false, timerCarga: 0, lidoEm: null,
     tarefasPend: new Map(), tarefasFeitas: new Map(), compromissos: new Map(),
-    prazosAbertos: new Map(), prazosFeitos: new Map(), feriados: new Map(), agendamentos: new Map(),
-    semanaVista: "", diaSel: "", diaMostrado: "", presidiosChave: "",
+    prazosAbertos: new Map(), prazosFeitos: new Map(), feriados: new Map(), agendamentos: new Map(), presidios: new Map(),
+    semanaVista: "", diaSel: "", diaMostrado: "", presModo: "dia", presidiosChave: null,
     visto: {}, confirmado: {}, erroLeitura: {},
     ocupado: new Set(), edit: null, fechando: false, confirmaPrazo: "", confirmaFeriado: ""
   };
@@ -833,12 +843,13 @@ textarea.in { min-height: 46vh; line-height: 1.5; resize: vertical; }
     assinar("prazosAbertos", db.collection("prazos").where("feito", "==", false), mapaDe(S.prazosAbertos));
     assinar("prazosFeitos", db.collection("prazos").where("feito", "==", true).orderBy("data", "desc").limit(30), mapaDe(S.prazosFeitos));
     assinar("feriados", db.collection("feriados"), mapaDe(S.feriados));
+    assinar("presidios", db.collection("presidios"), mapaDe(S.presidios));
     assinar("agendamentos", db.collection("agendamentos").where("data", ">=", P.addDias(P.inicioSemana(S.hoje), -56)), mapaDe(S.agendamentos));
     assinar("notas", db.doc("notas/texto"), aplicarNotas);
   }
   function conferirCarga() {
     conferirAcesso();
-    var nomes = PRINCIPAIS.concat(["prazosFeitos", "feriados", "notas", "agendamentos"]);
+    var nomes = PRINCIPAIS.concat(["prazosFeitos", "feriados", "notas", "agendamentos", "presidios"]);
     if (nomes.every(function (n) { return S.confirmado[n] || S.erroLeitura[n]; })) { clearTimeout(S.timerCarga); S.atrasou = false; }
   }
   /* Só a conta dona lê os dados. Se a plataforma não disser quem é o dono, o documento de notas serve de prova:
@@ -933,10 +944,28 @@ textarea.in { min-height: 46vh; line-height: 1.5; resize: vertical; }
     }
   }
   function minutos(hhmm) { return +hhmm.slice(0, 2) * 60 + +hhmm.slice(3); }
+  /* Compara nomes sem diferenciar maiúsculas, acentos e espaços: "Cppl 4" e "CPPL 4" são o mesmo presídio. */
+  function chaveNome(n) { return str(n).trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, " "); }
+  /* Nome como aparece na tela: se for um dos presídios da lista, usa a grafia da lista. */
+  function nomePresidio(x) {
+    var n = str(x).trim().replace(/\s+/g, " "), k = chaveNome(n), i;
+    for (i = 0; i < PRESIDIOS.length; i++) if (chaveNome(PRESIDIOS[i]) === k) return PRESIDIOS[i];
+    return n;
+  }
+  /* Opções do formulário: a lista fixa, depois os acrescentados e os que já aparecem em agendamentos. */
+  function opcoesPresidio() {
+    var vistos = {}, lista = [], outros = [];
+    function por(n) { n = str(n).trim().replace(/\s+/g, " "); var k = chaveNome(n); if (n && !vistos[k]) { vistos[k] = true; lista.push(n); } }
+    PRESIDIOS.forEach(por);
+    S.presidios.forEach(function (v) { outros.push(str(v.nome)); });
+    S.agendamentos.forEach(function (v) { outros.push(str(v.presidio)); });
+    outros.sort(cmpTexto).forEach(por);
+    return lista;
+  }
   function listaAgendamentos() {
     var out = [];
     S.agendamentos.forEach(function (v, id) {
-      out.push({ id: id, nome: str(v.nome), data: P.isISO(v.data) ? v.data : "", inicio: horaValida(v.inicio), fim: horaValida(v.fim), presidio: str(v.presidio), pago: v.pago === true });
+      out.push({ id: id, nome: str(v.nome), data: P.isISO(v.data) ? v.data : "", inicio: horaValida(v.inicio), fim: horaValida(v.fim), presidio: nomePresidio(v.presidio), pago: v.pago === true });
     });
     return out;
   }
@@ -1301,6 +1330,8 @@ textarea.in { min-height: 46vh; line-height: 1.5; resize: vertical; }
     var boxS = $("pres-semana"), boxD = $("pres-dia"), sit = situacao(["agendamentos"]);
     boxS.replaceChildren(); boxD.replaceChildren();
     $("pres-novo-btn").hidden = sit !== "ok";
+    $("pres-modo").hidden = sit !== "ok";
+    $("pres-modo-" + S.presModo).checked = true;
     if (sit !== "ok") {
       S.diaMostrado = "";
       $("pres-dia-titulo").textContent = "Agendamentos do dia";
@@ -1318,9 +1349,9 @@ textarea.in { min-height: 46vh; line-height: 1.5; resize: vertical; }
     var faixa = h("div", { class: "dias" }, dias.map(function (dia) {
       var n = porDia[dia] || 0;
       return h("button", {
-        type: "button", class: "dia" + (n ? " tem" : "") + (dia === hoje ? " hoje" : ""), "aria-pressed": String(dia === sel),
+        type: "button", class: "dia" + (n ? " tem" : "") + (dia === hoje ? " hoje" : ""), "aria-pressed": String(S.presModo === "dia" && dia === sel),
         "aria-label": P.fmtLonga(dia) + (dia === hoje ? ", hoje" : "") + ": " + (n ? P.plural(n, "agendamento") : "nenhum agendamento"),
-        onclick: function () { S.diaSel = dia; pedirRender(); }
+        onclick: function () { S.diaSel = dia; definirModo("dia"); }
       },
         h("span", { class: "dia-sem", text: P.DIAS_C[P.diaSemana(dia)].replace(".", "") }),
         h("span", { class: "dia-num", text: String(+dia.slice(8)) }),
@@ -1336,19 +1367,51 @@ textarea.in { min-height: 46vh; line-height: 1.5; resize: vertical; }
         h("span", null, h("strong", { text: String(total) }), total === 1 ? " agendamento na semana" : " agendamentos na semana"),
         seg !== atual ? h("button", { type: "button", class: "link-btn", text: "Voltar para esta semana", onclick: function () { S.semanaVista = ""; S.diaSel = ""; pedirRender(); } }) : null)));
 
+    if (S.presModo === "semana") {
+      $("pres-dia-titulo").replaceChildren("Semana toda", total ? h("span", { class: "n", text: String(total) }) : "");
+      if (!total) boxD.append(h("p", { class: "empty", text: "Nenhum agendamento nesta semana." }));
+      dias.forEach(function (dia) {
+        var lista = agendamentosDe(dia);
+        if (!lista.length) return;
+        boxD.append(
+          h("h3", { class: "sub-head" }, cap(P.fmtLonga(dia)) + (dia === hoje ? " · hoje" : ""), h("span", { class: "n", text: String(lista.length) })),
+          h("ul", { class: "rows" }, lista.map(linhaAgendamento)));
+      });
+      $("pres-novo-btn").textContent = "Agendar";
+      return;
+    }
     var doDia = agendamentosDe(sel);
     $("pres-dia-titulo").replaceChildren(cap(P.fmtLonga(sel)) + (sel === hoje ? " · hoje" : ""), doDia.length ? h("span", { class: "n", text: String(doDia.length) }) : "");
     boxD.append(listaOuVazio(doDia.map(linhaAgendamento), "Nenhum agendamento neste dia."));
     $("pres-novo-btn").textContent = "Agendar para " + quando(sel);
   }
-  /* Sugestões de presídio no formulário: os nomes já usados nos agendamentos carregados. */
   function atualizarPresidios() {
-    var nomes = {};
-    S.agendamentos.forEach(function (v) { var n = str(v.presidio).trim(); if (n) nomes[n] = true; });
-    var lista = Object.keys(nomes).sort(cmpTexto), chave = lista.join("\n");
+    var sel = $("c-a-presidio"), lista = opcoesPresidio(), chave = lista.join("|"), atual = sel.value;
     if (chave === S.presidiosChave) return;
     S.presidiosChave = chave;
-    $("lista-presidios").replaceChildren.apply($("lista-presidios"), lista.map(function (n) { return h("option", { value: n }); }));
+    sel.replaceChildren(h("option", { value: "", text: "Escolha o presídio" }));
+    lista.forEach(function (n) { sel.append(h("option", { value: n, text: n })); });
+    sel.append(h("option", { value: NOVO, text: "Acrescentar novo…" }));
+    sel.value = atual;
+    if (sel.value !== atual) sel.value = "";
+  }
+  function escolherPresidio(nome) {
+    var sel = $("c-a-presidio"), k = chaveNome(nome), achou = "";
+    Array.prototype.forEach.call(sel.options, function (o) { if (!achou && o.value && o.value !== NOVO && chaveNome(o.value) === k) achou = o.value; });
+    sel.value = achou || (str(nome).trim() ? NOVO : "");
+    $("c-a-presidio-novo").value = achou ? "" : str(nome).trim();
+  }
+  /* O presídio novo entra na lista de escolha para as próximas vezes. */
+  function guardarPresidio(nome) {
+    var ref = S.db.collection("presidios").doc();
+    tentar(function () { return ref.set({ nome: nome }); }).catch(function () {
+      alerta("O agendamento foi gravado, mas não consegui guardar “" + nome + "” na lista de presídios. Ele continua na lista enquanto houver agendamento com esse nome.");
+    });
+  }
+  function definirModo(modo) {
+    S.presModo = modo === "semana" ? "semana" : "dia";
+    try { localStorage.setItem("agenda.presModo", S.presModo); } catch (e) { /* sem armazenamento, a escolha vale só nesta visita */ }
+    pedirRender();
   }
   function avisoConflito() {
     var el = $("c-a-aviso"), data = val("c-a-data"), ini = val("c-a-inicio").slice(0, 5), fim = val("c-a-fim").slice(0, 5), msg = "";
@@ -1448,6 +1511,7 @@ textarea.in { min-height: 46vh; line-height: 1.5; resize: vertical; }
     $("f-compromissos").hidden = col !== "compromissos";
     $("f-prazos").hidden = col !== "prazos";
     $("f-agendamentos").hidden = col !== "agendamentos";
+    $("c-a-novo-campo").hidden = $("c-a-presidio").value !== NOVO;
     $("c-p-modos").hidden = editando;
     $("f-prazo-calc").hidden = manual;
     $("f-prazo-manual").hidden = !manual;
@@ -1491,7 +1555,7 @@ textarea.in { min-height: 46vh; line-height: 1.5; resize: vertical; }
       $("c-c-titulo").value = str(v.titulo); $("c-c-data").value = P.isISO(v.data) ? v.data : "";
       $("c-c-hora").value = /^\d{2}:\d{2}$/.test(str(v.hora)) ? v.hora : ""; $("c-c-local").value = str(v.local);
     } else if (col === "agendamentos") {
-      $("c-a-nome").value = str(v.nome); $("c-a-presidio").value = str(v.presidio); $("c-a-data").value = P.isISO(v.data) ? v.data : "";
+      $("c-a-nome").value = str(v.nome); escolherPresidio(v.presidio); $("c-a-data").value = P.isISO(v.data) ? v.data : "";
       $("c-a-inicio").value = horaValida(v.inicio); $("c-a-fim").value = horaValida(v.fim); $("c-a-fim").dataset.auto = "";
       $(v.pago === true ? "c-a-pago-sim" : "c-a-pago-nao").checked = true;
     } else { $("c-p-titulo").value = str(v.titulo); $("c-p-data").value = P.isISO(v.data) ? v.data : ""; }
@@ -1500,7 +1564,7 @@ textarea.in { min-height: 46vh; line-height: 1.5; resize: vertical; }
   }
   function enviarCompose(ev) {
     ev.preventDefault();
-    var editando = !!S.edit, col = editando ? S.edit.col : tipoMarcado(), dados = null, erro = "", ok = "";
+    var editando = !!S.edit, col = editando ? S.edit.col : tipoMarcado(), dados = null, erro = "", ok = "", presidioNovo = "";
     if (col === "tarefas") {
       dados = { texto: val("c-t-texto"), data: val("c-t-data") };
       if (!dados.texto) erro = "Escreva a tarefa.";
@@ -1513,9 +1577,14 @@ textarea.in { min-height: 46vh; line-height: 1.5; resize: vertical; }
       else if (dados.hora && !horaValida(dados.hora)) erro = "Hora incompleta ou inválida. Digite as horas e os minutos, como 1430, ou deixe em branco.";
       else ok = "Compromisso anotado para " + quando(dados.data) + (dados.hora ? ", às " + dados.hora : "") + ".";
     } else if (col === "agendamentos") {
-      dados = { nome: val("c-a-nome"), data: val("c-a-data"), inicio: val("c-a-inicio").slice(0, 5), fim: val("c-a-fim").slice(0, 5), presidio: val("c-a-presidio"), pago: $("c-a-pago-sim").checked };
+      var escolha = $("c-a-presidio").value, digitado = val("c-a-presidio-novo").replace(/\s+/g, " "), igual;
+      dados = { nome: val("c-a-nome"), data: val("c-a-data"), inicio: val("c-a-inicio").slice(0, 5), fim: val("c-a-fim").slice(0, 5), presidio: escolha === NOVO ? digitado : escolha, pago: $("c-a-pago-sim").checked };
+      if (escolha === NOVO && digitado) {
+        igual = opcoesPresidio().filter(function (n) { return chaveNome(n) === chaveNome(digitado); })[0];
+        if (igual) dados.presidio = igual; else presidioNovo = digitado;
+      }
       if (!dados.nome) erro = "Escreva o nome do cliente.";
-      else if (!dados.presidio) erro = "Informe o presídio.";
+      else if (!dados.presidio) erro = escolha === NOVO ? "Escreva o nome do novo presídio." : "Escolha o presídio.";
       else if (!P.isISO(dados.data)) erro = "Informe a data do agendamento.";
       else if (!dados.inicio) erro = "Informe o horário de início.";
       else if (!horaValida(dados.inicio)) erro = "Horário de início incompleto ou inválido. Digite as horas e os minutos, como 0830.";
@@ -1562,6 +1631,7 @@ textarea.in { min-height: 46vh; line-height: 1.5; resize: vertical; }
       fecharCompose();
       if (!editando && col === "prazos") irPara("prazos");
       if (col === "agendamentos") {
+        if (presidioNovo) guardarPresidio(presidioNovo);
         S.semanaVista = P.inicioSemana(dados.data) !== P.inicioSemana(S.hoje) ? P.inicioSemana(dados.data) : "";
         S.diaSel = dados.data;
         if (editando) pedirRender(); else irPara("presidios");
@@ -1649,6 +1719,12 @@ textarea.in { min-height: 46vh; line-height: 1.5; resize: vertical; }
     ligarHora("c-a-inicio", function () { sugerirFim(); avisoConflito(); }, function () { sugerirFim(); avisoConflito(); });
     ligarHora("c-a-fim", function () { $("c-a-fim").dataset.auto = ""; avisoConflito(); }, avisoConflito);
     $("c-a-data").addEventListener("change", avisoConflito);
+    $("c-a-presidio").addEventListener("change", function () {
+      var novo = this.value === NOVO;
+      $("c-a-novo-campo").hidden = !novo;
+      if (novo) $("c-a-presidio-novo").focus();
+    });
+    document.querySelectorAll('input[name="pres-modo"]').forEach(function (r) { r.addEventListener("change", function () { definirModo(r.value); }); });
     $("hoje-calc-btn").addEventListener("click", function () { abrirNovo("prazos", "calc"); });
     $("prazos-calc-btn").addEventListener("click", function () { abrirNovo("prazos", "calc"); });
     $("hoje-comp-btn").addEventListener("click", function () { abrirNovo("compromissos"); });
@@ -1657,6 +1733,7 @@ textarea.in { min-height: 46vh; line-height: 1.5; resize: vertical; }
     $("fechar-btn").addEventListener("click", function () { S.fechando = !S.fechando; renderFechamento(); });
 
     $("compose-form").addEventListener("submit", enviarCompose);
+    $("compose-form").addEventListener("input", function () { erroCompose(""); });
     $("compose-fechar").addEventListener("click", fecharCompose);
     $("compose-cancelar").addEventListener("click", fecharCompose);
     $("compose-excluir").addEventListener("click", function () { $("compose-confirma").hidden = false; $("compose-excluir-sim").focus(); });
@@ -1696,6 +1773,7 @@ textarea.in { min-height: 46vh; line-height: 1.5; resize: vertical; }
     document.addEventListener("visibilitychange", function () { if (!document.hidden) conferirDia(); });
   }
 
+  try { if (localStorage.getItem("agenda.presModo") === "semana") S.presModo = "semana"; } catch (e) { /* sem armazenamento, começa no dia escolhido */ }
   montarRecursos();
   ligarEventos();
   mostrar(lerHash());
