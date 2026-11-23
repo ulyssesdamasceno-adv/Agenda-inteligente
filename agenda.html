@@ -36,6 +36,10 @@
   --on-ok: #ffffff;
   --pago-bg: #cfeeda;
   --devendo-bg: #fbd5d0;
+  --confirmar: #7a5c00;
+  --confirmar-bg: #fdf0b3;
+  --confirmar-forte: #f0c419;
+  --on-confirmar: #3a2c00;
   --shadow: 0 1px 2px rgba(8, 26, 61, .08), 0 10px 28px rgba(8, 26, 61, .10);
   --font-display: "Cinzel", "Trajan Pro", Georgia, "Times New Roman", serif;
   --font-text: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
@@ -45,7 +49,7 @@
     --bg: #06122b; --surface: #0c1e45; --ink: #eef2fa; --muted: #a2aec8; --line: #24376a; --line-soft: #182a55;
     --action: #d9b05c; --on-action: #081a3d; --accent-ink: #e6c477; --field: #0a1a3d; --focus: #9dbcff;
     --chip: #1b2e5e; --chip-ink: #cdd7ee; --crit: #ffa197; --crit-bg: #4a1613; --warn: #ffc874; --warn-bg: #3f2c07;
-    --ok: #7fdcaa; --ok-bg: #0f3626; --on-ok: #06122b; --pago-bg: #134a33; --devendo-bg: #5c1d19;
+    --ok: #7fdcaa; --ok-bg: #0f3626; --on-ok: #06122b; --pago-bg: #134a33; --devendo-bg: #5c1d19; --confirmar: #ffd95e; --confirmar-bg: #4d3f08; --confirmar-forte: #ffd95e; --on-confirmar: #2b2100;
     --shadow: 0 1px 2px rgba(0, 0, 0, .4), 0 10px 28px rgba(0, 0, 0, .35);
     color-scheme: dark;
   }
@@ -54,7 +58,7 @@
   --bg: #06122b; --surface: #0c1e45; --ink: #eef2fa; --muted: #a2aec8; --line: #24376a; --line-soft: #182a55;
   --action: #d9b05c; --on-action: #081a3d; --accent-ink: #e6c477; --field: #0a1a3d; --focus: #9dbcff;
   --chip: #1b2e5e; --chip-ink: #cdd7ee; --crit: #ffa197; --crit-bg: #4a1613; --warn: #ffc874; --warn-bg: #3f2c07;
-  --ok: #7fdcaa; --ok-bg: #0f3626; --on-ok: #06122b; --pago-bg: #134a33; --devendo-bg: #5c1d19;
+  --ok: #7fdcaa; --ok-bg: #0f3626; --on-ok: #06122b; --pago-bg: #134a33; --devendo-bg: #5c1d19; --confirmar: #ffd95e; --confirmar-bg: #4d3f08; --confirmar-forte: #ffd95e; --on-confirmar: #2b2100;
   --shadow: 0 1px 2px rgba(0, 0, 0, .4), 0 10px 28px rgba(0, 0, 0, .35);
   color-scheme: dark;
 }
@@ -261,14 +265,24 @@ textarea.in { min-height: 46vh; line-height: 1.5; resize: vertical; }
 .row.is-faixa { grid-template-columns: 84px minmax(0, 1fr) auto; margin-top: 6px; padding: 0 8px 0 12px; border-bottom: 0; border-radius: 12px; }
 .row.is-faixa.pago { background: var(--pago-bg); }
 .row.is-faixa.devendo { background: var(--devendo-bg); }
+.row.is-faixa.confirmar { background: var(--confirmar-bg); }
 .pago .faixa { color: var(--ok); }
 .devendo .faixa { color: var(--crit); }
+.confirmar .faixa { color: var(--confirmar); }
 .status { align-self: center; min-height: 36px; margin: 8px 0; padding: 0 12px; border: 0; border-radius: 999px; font-size: 13px; font-weight: 700; white-space: nowrap; cursor: pointer; }
 .pago .status { background: var(--ok); color: var(--on-ok); }
 .devendo .status { background: var(--crit); color: var(--surface); }
+.confirmar .status { background: var(--confirmar-forte); color: var(--on-confirmar); }
+.situacoes { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 8px; padding: 2px 0 12px; }
+.sit { min-height: 40px; padding: 0 14px; border: 2px solid transparent; border-radius: 999px; font-size: 14px; font-weight: 700; cursor: pointer; }
+.sit.pago { background: var(--ok); color: var(--on-ok); }
+.sit.devendo { background: var(--crit); color: var(--surface); }
+.sit.confirmar { background: var(--confirmar-forte); color: var(--on-confirmar); }
+.sit[aria-pressed="true"] { border-color: var(--ink); }
 .status[disabled] { opacity: .55; }
 #c-a-pago-sim:checked + span { background: var(--ok); color: var(--on-ok); }
 #c-a-pago-nao:checked + span { background: var(--crit); color: var(--surface); }
+#c-a-pago-confirmar:checked + span { background: var(--confirmar-forte); color: var(--on-confirmar); }
 .faixa { padding: 13px 8px 0 0; display: grid; gap: 1px; font-variant-numeric: tabular-nums; color: var(--accent-ink); }
 .faixa b { font-size: 15.5px; font-weight: 700; }
 .faixa span { font-size: 12.5px; font-weight: 600; }
@@ -385,10 +399,11 @@ textarea.in { min-height: 46vh; line-height: 1.5; resize: vertical; }
           <div class="field"><label for="c-a-fim">Até <span class="opt">(opcional)</span></label><input class="in hora-in" id="c-a-fim" type="text" inputmode="numeric" autocomplete="off" placeholder="hh:mm"></div>
         </div>
         <div class="field">
-          <span class="rotulo" id="c-a-pago-rotulo">Pagamento</span>
+          <span class="rotulo" id="c-a-pago-rotulo">Situação</span>
           <div class="seg" role="radiogroup" aria-labelledby="c-a-pago-rotulo">
-            <label><input type="radio" name="c-a-pago" id="c-a-pago-nao" value="nao" checked><span>Não pago</span></label>
-            <label><input type="radio" name="c-a-pago" id="c-a-pago-sim" value="sim"><span>Pago</span></label>
+            <label><input type="radio" name="c-a-pago" id="c-a-pago-nao" value="nao_pago" checked><span>Não pago</span></label>
+            <label><input type="radio" name="c-a-pago" id="c-a-pago-confirmar" value="a_confirmar"><span>A confirmar</span></label>
+            <label><input type="radio" name="c-a-pago" id="c-a-pago-sim" value="pago"><span>Pago</span></label>
           </div>
         </div>
         <p class="form-aviso" id="c-a-aviso" role="status" hidden></p>
@@ -773,7 +788,7 @@ textarea.in { min-height: 46vh; line-height: 1.5; resize: vertical; }
     prazosAbertos: new Map(), prazosFeitos: new Map(), feriados: new Map(), agendamentos: new Map(), presidios: new Map(),
     semanaVista: "", diaSel: "", diaMostrado: "", presModo: "dia", presidiosChave: null,
     visto: {}, confirmado: {}, erroLeitura: {},
-    ocupado: new Set(), edit: null, fechando: false, confirmaPrazo: "", confirmaFeriado: ""
+    ocupado: new Set(), edit: null, fechando: false, confirmaPrazo: "", confirmaFeriado: "", escolheSituacao: ""
   };
   var N = { sujo: false, salvando: false, timer: 0, remoto: false, salvo: "", salvoEm: null, erro: "" };
 
@@ -962,10 +977,18 @@ textarea.in { min-height: 46vh; line-height: 1.5; resize: vertical; }
     outros.sort(cmpTexto).forEach(por);
     return lista;
   }
+  /* Situação do agendamento: "pago" (verde), "nao_pago" (vermelho) ou "a_confirmar" (amarelo).
+     Agendamentos antigos só têm o campo pago; ele continua sendo gravado junto, verdadeiro só quando a situação é "pago". */
+  var SITUACOES = [["pago", "Pago"], ["nao_pago", "Não pago"], ["a_confirmar", "A confirmar"]];
+  function lerSituacao(v) {
+    return v.situacao === "pago" || v.situacao === "nao_pago" || v.situacao === "a_confirmar" ? v.situacao : (v.pago === true ? "pago" : "nao_pago");
+  }
+  function classeSituacao(x) { return x === "pago" ? "pago" : x === "a_confirmar" ? "confirmar" : "devendo"; }
+  function rotuloSituacao(x) { return x === "pago" ? "Pago" : x === "a_confirmar" ? "A confirmar" : "Não pago"; }
   function listaAgendamentos() {
     var out = [];
     S.agendamentos.forEach(function (v, id) {
-      out.push({ id: id, nome: str(v.nome), data: P.isISO(v.data) ? v.data : "", inicio: horaValida(v.inicio), fim: horaValida(v.fim), presidio: nomePresidio(v.presidio), pago: v.pago === true });
+      out.push({ id: id, nome: str(v.nome), data: P.isISO(v.data) ? v.data : "", inicio: horaValida(v.inicio), fim: horaValida(v.fim), presidio: nomePresidio(v.presidio), situacao: lerSituacao(v) });
     });
     return out;
   }
@@ -1097,22 +1120,31 @@ textarea.in { min-height: 46vh; line-height: 1.5; resize: vertical; }
     }
     return li;
   }
-  function alternarPago(a) {
-    var caminho = "agendamentos/" + a.id, pago = !a.pago;
-    gravar(caminho, function () { return S.db.doc(caminho).update({ pago: pago }); }, pago ? "Marcado como pago." : "Marcado como não pago.");
+  function definirSituacao(a, situacao) {
+    var caminho = "agendamentos/" + a.id;
+    S.escolheSituacao = "";
+    if (situacao === a.situacao) { pedirRender(); return; }
+    gravar(caminho, function () { return S.db.doc(caminho).update({ situacao: situacao, pago: situacao === "pago" }); }, "Marcado como " + rotuloSituacao(situacao).toLowerCase() + ".");
   }
-  /* A linha inteira fica verde quando o agendamento está pago e vermelha quando não está. */
+  /* A linha inteira fica verde (pago), vermelha (não pago) ou amarela (a confirmar). */
   function linhaAgendamento(a) {
-    return h("li", { class: "row is-faixa " + (a.pago ? "pago" : "devendo") },
+    var rotulo = rotuloSituacao(a.situacao), aberto = S.escolheSituacao === a.id;
+    var li = h("li", { class: "row is-faixa " + classeSituacao(a.situacao) },
       h("span", { class: "faixa" }, h("b", { text: P.fmtHora(a.inicio) || "sem hora" }), a.fim ? h("span", { text: "até " + P.fmtHora(a.fim) }) : null),
       h("button", { type: "button", class: "row-main", onclick: function () { abrirEdicao("agendamentos", a.id); } },
         h("span", { class: "row-title", text: a.nome || "(sem nome)" }),
         h("span", { class: "row-meta" }, h("span", { text: a.presidio || "presídio não informado" }))),
       h("button", {
-        type: "button", class: "status", role: "switch", "aria-checked": String(a.pago), disabled: S.ocupado.has("agendamentos/" + a.id),
-        "aria-label": "Pagamento de " + a.nome + ": " + (a.pago ? "pago. Tocar para marcar como não pago" : "não pago. Tocar para marcar como pago"),
-        text: a.pago ? "Pago" : "Não pago", onclick: function () { alternarPago(a); }
+        type: "button", class: "status", "aria-expanded": String(aberto), disabled: S.ocupado.has("agendamentos/" + a.id),
+        "aria-label": "Situação de " + a.nome + ": " + rotulo.toLowerCase() + ". Tocar para trocar", text: rotulo,
+        onclick: function () { S.escolheSituacao = aberto ? "" : a.id; pedirRender(); }
       }));
+    if (aberto) {
+      li.append(h("div", { class: "situacoes" }, SITUACOES.map(function (par) {
+        return h("button", { type: "button", class: "sit " + classeSituacao(par[0]), "aria-pressed": String(a.situacao === par[0]), text: par[1], onclick: function () { definirSituacao(a, par[0]); } });
+      })));
+    }
+    return li;
   }
   /* Fora da aba Presídios aparece só a quantidade, sem os dados do agendamento. */
   function linhaPresidios(dia, n) {
@@ -1557,7 +1589,7 @@ textarea.in { min-height: 46vh; line-height: 1.5; resize: vertical; }
     } else if (col === "agendamentos") {
       $("c-a-nome").value = str(v.nome); escolherPresidio(v.presidio); $("c-a-data").value = P.isISO(v.data) ? v.data : "";
       $("c-a-inicio").value = horaValida(v.inicio); $("c-a-fim").value = horaValida(v.fim); $("c-a-fim").dataset.auto = "";
-      $(v.pago === true ? "c-a-pago-sim" : "c-a-pago-nao").checked = true;
+      $({ pago: "c-a-pago-sim", a_confirmar: "c-a-pago-confirmar", nao_pago: "c-a-pago-nao" }[lerSituacao(v)]).checked = true;
     } else { $("c-p-titulo").value = str(v.titulo); $("c-p-data").value = P.isISO(v.data) ? v.data : ""; }
     ajustarCompose();
     mostrarCompose(null);
@@ -1578,7 +1610,8 @@ textarea.in { min-height: 46vh; line-height: 1.5; resize: vertical; }
       else ok = "Compromisso anotado para " + quando(dados.data) + (dados.hora ? ", às " + dados.hora : "") + ".";
     } else if (col === "agendamentos") {
       var escolha = $("c-a-presidio").value, digitado = val("c-a-presidio-novo").replace(/\s+/g, " "), igual;
-      dados = { nome: val("c-a-nome"), data: val("c-a-data"), inicio: val("c-a-inicio").slice(0, 5), fim: val("c-a-fim").slice(0, 5), presidio: escolha === NOVO ? digitado : escolha, pago: $("c-a-pago-sim").checked };
+      dados = { nome: val("c-a-nome"), data: val("c-a-data"), inicio: val("c-a-inicio").slice(0, 5), fim: val("c-a-fim").slice(0, 5), presidio: escolha === NOVO ? digitado : escolha, situacao: document.querySelector('input[name="c-a-pago"]:checked').value };
+      dados.pago = dados.situacao === "pago";
       if (escolha === NOVO && digitado) {
         igual = opcoesPresidio().filter(function (n) { return chaveNome(n) === chaveNome(digitado); })[0];
         if (igual) dados.presidio = igual; else presidioNovo = digitado;
@@ -1590,7 +1623,7 @@ textarea.in { min-height: 46vh; line-height: 1.5; resize: vertical; }
       else if (!horaValida(dados.inicio)) erro = "Horário de início incompleto ou inválido. Digite as horas e os minutos, como 0830.";
       else if (dados.fim && !horaValida(dados.fim)) erro = "Horário final incompleto ou inválido. Digite as horas e os minutos, como 0900, ou deixe em branco.";
       else if (dados.fim && dados.fim <= dados.inicio) erro = "O horário final precisa ser depois do início.";
-      else ok = "Agendado: " + dados.nome + ", " + quando(dados.data) + ", " + P.fmtFaixa(dados.inicio, dados.fim) + (dados.pago ? ", pago." : ", não pago.");
+      else ok = "Agendado: " + dados.nome + ", " + quando(dados.data) + ", " + P.fmtFaixa(dados.inicio, dados.fim) + ", " + rotuloSituacao(dados.situacao).toLowerCase() + ".";
     } else if (!editando && $("c-p-modo-calc").checked) {
       var c = lerCalc(), r;
       if (c.vazio) erro = "Escolha o recurso ou a peça.";
