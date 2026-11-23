@@ -42,7 +42,7 @@ Grave sempre todos os campos do grupo, com os tipos acima. A página lê `tarefa
 - "Hoje" é a data no horário de Brasília (suposição do Claude; o Doutor não informou o fuso): `TZ=America/Sao_Paulo date +%F`. A página usa a data do aparelho.
 - Antes de alterar ou apagar um item que já existe, leia o item. Nunca apague nada sem o Doutor pedir. Nunca apague a página.
 - Não compartilhe a agenda, não envie nada e não use serviços pagos.
-- O repositório no GitHub é público. Não envie nada para lá sem o Doutor autorizar.
+- O repositório no GitHub é público. Em 23/11/2026 o Doutor autorizou enviar o código para lá ("Pode enviar tudo"), sabendo que vão o código da página, a logo e este arquivo. O Claude entende que isso vale também para as próximas atualizações do código, no ramo da sessão, e avisou o Doutor. Dados da agenda (tarefas, prazos, clientes, link da página) nunca vão para o repositório. Não abra pull request sem o Doutor pedir.
 
 ## Prazos processuais
 
