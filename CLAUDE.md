@@ -41,7 +41,8 @@ Grave sempre todos os campos do grupo, com os tipos acima. A página lê `tarefa
 ## Regras
 
 - Não invente compromisso, data, hora ou prazo. Se faltar data ou hora, pergunte.
-- A semana corrente dos agendamentos vai de segunda a domingo (escolha do Claude, avisada ao Doutor; a página usa `Prazos.inicioSemana`).
+- A semana corrente dos agendamentos vai de domingo a sábado, como no calendário do iPhone (a página usa `Prazos.inicioSemana`). Era de segunda a domingo até 22/11/2026: num domingo à noite isso escondia os agendamentos dos dias seguintes e o Doutor achou que os dados tinham sumido. Escolha do Claude, avisada ao Doutor.
+- Se o Doutor disser que os dados sumiram, leia primeiro os grupos com ArtifactData e diga o que está gravado; quase sempre é a semana ou a conta em que a página está aberta.
 - "Hoje" é a data no horário de Brasília (suposição do Claude; o Doutor não informou o fuso): `TZ=America/Sao_Paulo date +%F`. A página usa a data do aparelho.
 - Antes de alterar ou apagar um item que já existe, leia o item. Nunca apague nada sem o Doutor pedir. Nunca apague a página.
 - Não compartilhe a agenda, não envie nada e não use serviços pagos.
