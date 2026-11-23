@@ -34,6 +34,8 @@
   --ok: #1b7046;
   --ok-bg: #dff3e7;
   --on-ok: #ffffff;
+  --pago-bg: #cfeeda;
+  --devendo-bg: #fbd5d0;
   --shadow: 0 1px 2px rgba(8, 26, 61, .08), 0 10px 28px rgba(8, 26, 61, .10);
   --font-display: "Cinzel", "Trajan Pro", Georgia, "Times New Roman", serif;
   --font-text: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
@@ -43,7 +45,7 @@
     --bg: #06122b; --surface: #0c1e45; --ink: #eef2fa; --muted: #a2aec8; --line: #24376a; --line-soft: #182a55;
     --action: #d9b05c; --on-action: #081a3d; --accent-ink: #e6c477; --field: #0a1a3d; --focus: #9dbcff;
     --chip: #1b2e5e; --chip-ink: #cdd7ee; --crit: #ffa197; --crit-bg: #4a1613; --warn: #ffc874; --warn-bg: #3f2c07;
-    --ok: #7fdcaa; --ok-bg: #0f3626; --on-ok: #06122b;
+    --ok: #7fdcaa; --ok-bg: #0f3626; --on-ok: #06122b; --pago-bg: #134a33; --devendo-bg: #5c1d19;
     --shadow: 0 1px 2px rgba(0, 0, 0, .4), 0 10px 28px rgba(0, 0, 0, .35);
     color-scheme: dark;
   }
@@ -52,7 +54,7 @@
   --bg: #06122b; --surface: #0c1e45; --ink: #eef2fa; --muted: #a2aec8; --line: #24376a; --line-soft: #182a55;
   --action: #d9b05c; --on-action: #081a3d; --accent-ink: #e6c477; --field: #0a1a3d; --focus: #9dbcff;
   --chip: #1b2e5e; --chip-ink: #cdd7ee; --crit: #ffa197; --crit-bg: #4a1613; --warn: #ffc874; --warn-bg: #3f2c07;
-  --ok: #7fdcaa; --ok-bg: #0f3626; --on-ok: #06122b;
+  --ok: #7fdcaa; --ok-bg: #0f3626; --on-ok: #06122b; --pago-bg: #134a33; --devendo-bg: #5c1d19;
   --shadow: 0 1px 2px rgba(0, 0, 0, .4), 0 10px 28px rgba(0, 0, 0, .35);
   color-scheme: dark;
 }
@@ -178,7 +180,7 @@ button { -webkit-tap-highlight-color: transparent; }
 .icon-btn { width: 40px; height: 40px; border: 0; border-radius: 10px; background: var(--chip); color: var(--chip-ink); display: grid; place-items: center; cursor: pointer; }
 .fields { display: grid; gap: 14px; margin-top: 14px; }
 .field { display: grid; gap: 6px; min-width: 0; }
-.field > label { font-size: 13px; font-weight: 600; color: var(--muted); }
+.field > label, .field > .rotulo { font-size: 13px; font-weight: 600; color: var(--muted); }
 .opt { font-weight: 500; }
 .pair { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 12px; }
 .in {
@@ -253,7 +255,17 @@ textarea.in { min-height: 46vh; line-height: 1.5; resize: vertical; }
 .dia[aria-pressed="true"].tem .dia-n { background: var(--on-action); color: var(--action); }
 .semana-pe { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 4px 12px; min-height: 40px; margin-top: 10px; padding: 8px 4px 0; border-top: 1px solid var(--line-soft); font-size: 14px; color: var(--muted); }
 .semana-pe strong { color: var(--ink); font-variant-numeric: tabular-nums; }
-.row.is-faixa { grid-template-columns: 96px minmax(0, 1fr); }
+.row.is-faixa { grid-template-columns: 84px minmax(0, 1fr) auto; margin-top: 6px; padding: 0 8px 0 12px; border-bottom: 0; border-radius: 12px; }
+.row.is-faixa.pago { background: var(--pago-bg); }
+.row.is-faixa.devendo { background: var(--devendo-bg); }
+.pago .faixa { color: var(--ok); }
+.devendo .faixa { color: var(--crit); }
+.status { align-self: center; min-height: 36px; margin: 8px 0; padding: 0 12px; border: 0; border-radius: 999px; font-size: 13px; font-weight: 700; white-space: nowrap; cursor: pointer; }
+.pago .status { background: var(--ok); color: var(--on-ok); }
+.devendo .status { background: var(--crit); color: var(--surface); }
+.status[disabled] { opacity: .55; }
+#c-a-pago-sim:checked + span { background: var(--ok); color: var(--on-ok); }
+#c-a-pago-nao:checked + span { background: var(--crit); color: var(--surface); }
 .faixa { padding: 13px 8px 0 0; display: grid; gap: 1px; font-variant-numeric: tabular-nums; color: var(--accent-ink); }
 .faixa b { font-size: 15.5px; font-weight: 700; }
 .faixa span { font-size: 12.5px; font-weight: 600; }
@@ -367,6 +379,13 @@ textarea.in { min-height: 46vh; line-height: 1.5; resize: vertical; }
         <div class="pair">
           <div class="field"><label for="c-a-inicio">Das</label><input class="in" id="c-a-inicio" type="time"></div>
           <div class="field"><label for="c-a-fim">Até <span class="opt">(opcional)</span></label><input class="in" id="c-a-fim" type="time"></div>
+        </div>
+        <div class="field">
+          <span class="rotulo" id="c-a-pago-rotulo">Pagamento</span>
+          <div class="seg" role="radiogroup" aria-labelledby="c-a-pago-rotulo">
+            <label><input type="radio" name="c-a-pago" id="c-a-pago-nao" value="nao" checked><span>Não pago</span></label>
+            <label><input type="radio" name="c-a-pago" id="c-a-pago-sim" value="sim"><span>Pago</span></label>
+          </div>
         </div>
         <p class="form-aviso" id="c-a-aviso" role="status" hidden></p>
       </div>
@@ -875,7 +894,7 @@ textarea.in { min-height: 46vh; line-height: 1.5; resize: vertical; }
   function listaAgendamentos() {
     var out = [];
     S.agendamentos.forEach(function (v, id) {
-      out.push({ id: id, nome: str(v.nome), data: P.isISO(v.data) ? v.data : "", inicio: horaValida(v.inicio), fim: horaValida(v.fim), presidio: str(v.presidio) });
+      out.push({ id: id, nome: str(v.nome), data: P.isISO(v.data) ? v.data : "", inicio: horaValida(v.inicio), fim: horaValida(v.fim), presidio: str(v.presidio), pago: v.pago === true });
     });
     return out;
   }
@@ -1007,12 +1026,22 @@ textarea.in { min-height: 46vh; line-height: 1.5; resize: vertical; }
     }
     return li;
   }
+  function alternarPago(a) {
+    var caminho = "agendamentos/" + a.id, pago = !a.pago;
+    gravar(caminho, function () { return S.db.doc(caminho).update({ pago: pago }); }, pago ? "Marcado como pago." : "Marcado como não pago.");
+  }
+  /* A linha inteira fica verde quando o agendamento está pago e vermelha quando não está. */
   function linhaAgendamento(a) {
-    return h("li", { class: "row is-faixa" },
+    return h("li", { class: "row is-faixa " + (a.pago ? "pago" : "devendo") },
       h("span", { class: "faixa" }, h("b", { text: P.fmtHora(a.inicio) || "sem hora" }), a.fim ? h("span", { text: "até " + P.fmtHora(a.fim) }) : null),
       h("button", { type: "button", class: "row-main", onclick: function () { abrirEdicao("agendamentos", a.id); } },
         h("span", { class: "row-title", text: a.nome || "(sem nome)" }),
-        h("span", { class: "row-meta" }, h("span", { text: a.presidio || "presídio não informado" }))));
+        h("span", { class: "row-meta" }, h("span", { text: a.presidio || "presídio não informado" }))),
+      h("button", {
+        type: "button", class: "status", role: "switch", "aria-checked": String(a.pago), disabled: S.ocupado.has("agendamentos/" + a.id),
+        "aria-label": "Pagamento de " + a.nome + ": " + (a.pago ? "pago. Tocar para marcar como não pago" : "não pago. Tocar para marcar como pago"),
+        text: a.pago ? "Pago" : "Não pago", onclick: function () { alternarPago(a); }
+      }));
   }
   /* Fora da aba Presídios aparece só a quantidade, sem os dados do agendamento. */
   function linhaPresidios(dia, n) {
@@ -1422,6 +1451,7 @@ textarea.in { min-height: 46vh; line-height: 1.5; resize: vertical; }
     } else if (col === "agendamentos") {
       $("c-a-nome").value = str(v.nome); $("c-a-presidio").value = str(v.presidio); $("c-a-data").value = P.isISO(v.data) ? v.data : "";
       $("c-a-inicio").value = horaValida(v.inicio); $("c-a-fim").value = horaValida(v.fim); $("c-a-fim").dataset.auto = "";
+      $(v.pago === true ? "c-a-pago-sim" : "c-a-pago-nao").checked = true;
     } else { $("c-p-titulo").value = str(v.titulo); $("c-p-data").value = P.isISO(v.data) ? v.data : ""; }
     ajustarCompose();
     mostrarCompose(null);
@@ -1441,14 +1471,14 @@ textarea.in { min-height: 46vh; line-height: 1.5; resize: vertical; }
       else if (dados.hora && !/^\d{2}:\d{2}$/.test(dados.hora)) erro = "Hora inválida. Use HH:MM ou deixe em branco.";
       else ok = "Compromisso anotado para " + quando(dados.data) + (dados.hora ? ", às " + dados.hora : "") + ".";
     } else if (col === "agendamentos") {
-      dados = { nome: val("c-a-nome"), data: val("c-a-data"), inicio: val("c-a-inicio").slice(0, 5), fim: val("c-a-fim").slice(0, 5), presidio: val("c-a-presidio") };
+      dados = { nome: val("c-a-nome"), data: val("c-a-data"), inicio: val("c-a-inicio").slice(0, 5), fim: val("c-a-fim").slice(0, 5), presidio: val("c-a-presidio"), pago: $("c-a-pago-sim").checked };
       if (!dados.nome) erro = "Escreva o nome do cliente.";
       else if (!dados.presidio) erro = "Informe o presídio.";
       else if (!P.isISO(dados.data)) erro = "Informe a data do agendamento.";
       else if (!horaValida(dados.inicio)) erro = "Informe o horário de início.";
       else if (dados.fim && !horaValida(dados.fim)) erro = "Horário final inválido. Use HH:MM ou deixe em branco.";
       else if (dados.fim && dados.fim <= dados.inicio) erro = "O horário final precisa ser depois do início.";
-      else ok = "Agendado: " + dados.nome + ", " + quando(dados.data) + ", " + P.fmtFaixa(dados.inicio, dados.fim) + ".";
+      else ok = "Agendado: " + dados.nome + ", " + quando(dados.data) + ", " + P.fmtFaixa(dados.inicio, dados.fim) + (dados.pago ? ", pago." : ", não pago.");
     } else if (!editando && $("c-p-modo-calc").checked) {
       var c = lerCalc(), r;
       if (c.vazio) erro = "Escolha o recurso ou a peça.";
