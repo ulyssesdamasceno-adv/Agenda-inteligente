@@ -22,11 +22,13 @@ Definidos pelo Dr. Ulysses:
 
 - `presidios` (pedido em 22/11/2026): `nome`. São os presídios que o Doutor acrescentou à lista de escolha. A lista fixa, definida por ele, está em `agenda.html` (`PRESIDIOS`): CPPL 1 a CPPL 7, PACATUBA, IPPOO II, CTOC, AQUIRAZ, UPF e IMELDA
 
+- `audiencias` (pedido em 27/11/2026): `nome`, `vara`, `data`, `inicio` (HH:MM), `fim` (HH:MM ou `""`) e `situacao`: `"online"` (linha verde), `"presencial"` (amarela) ou `"cancelada"` (cinza). Na página, a aba Audiências fica depois de Presídios e antes de Notas, com a mesma aparência da linha dos presídios
+
 Acrescentado pelo Claude para o cálculo de prazos (avisado ao Doutor):
 
 - `feriados`: `data`, `descricao`. São os dias sem expediente no tribunal (feriado local, ponto facultativo, suspensão de expediente).
 
-Grave sempre todos os campos do grupo, com os tipos acima. A página lê `tarefas` por `feita == false` e `feitaEm >= data`, e `prazos` por `feito == false`: um item sem esses campos não aparece. `agendamentos` é lido por `data >=` oito semanas atrás.
+Grave sempre todos os campos do grupo, com os tipos acima. A página lê `tarefas` por `feita == false` e `feitaEm >= data`, e `prazos` por `feito == false`: um item sem esses campos não aparece. `agendamentos` é lido por `data >=` oito semanas atrás e `audiencias` por `data >=` 60 dias atrás.
 
 ## O que o Doutor pode pedir
 
@@ -34,6 +36,7 @@ Grave sempre todos os campos do grupo, com os tipos acima. A página lê `tarefa
 - O Doutor quer a conversa enxuta (pedido em 22/11/2026: "sem encher a conversa de mensagem"). Aceite vários itens numa mensagem só, grave todos e confirme o lote em uma linha, sem repetir os itens; só escreva mais se faltar dado ou algo falhar
 - "hoje" = prazos próximos, compromissos de hoje por horário, tarefas de hoje e pendentes, e uma sugestão de ordem. Dos presídios, diga só quantos agendamentos há hoje e na semana corrente, sem nomes nem horários (o Doutor pediu: "só o número... sem adentrar nas informações")
 - agendamentos nos presídios = quando o Doutor pedir os agendamentos, liste dia por dia: nome, horário no formato "08h até 08:30h" e presídio. Para anotar um, grave em `agendamentos`; se faltar data, horário ou presídio, pergunte. Grave `presidio` com a grafia da lista ("cppl 3" vira "CPPL 3"); se for um presídio fora da lista fixa e do grupo `presidios`, grave-o também em `presidios` e diga isso na confirmação. Se o Doutor não disser a situação, grave `situacao: "nao_pago"` e `pago: false` e diga na confirmação que ficou como não pago (padrão escolhido pelo Claude, igual ao do formulário). Ao mudar a situação de um agendamento, grave os dois campos juntos
+- audiências = quando o Doutor pedir as audiências, liste dia por dia: horário ("09h até 10h"), nome, vara e se é on-line, presencial ou cancelada. Para anotar uma, grave em `audiencias`; se faltar data, horário, vara ou se é on-line ou presencial, pergunte, sem escolher por conta própria. Em "hoje", "semana" e "fechar o dia", diga só a quantidade de audiências, sem contar as canceladas (escolha do Claude para ficar igual aos presídios, avisada ao Doutor em 27/11/2026)
 - "prazos" = prazos em aberto, do mais próximo ao mais distante
 - "semana" = os próximos 7 dias, dia por dia (dos presídios, só a quantidade de cada dia)
 - "fechar o dia" = o que foi feito, o que ficou pendente e o que há amanhã

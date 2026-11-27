@@ -40,6 +40,10 @@
   --confirmar-bg: #fdf0b3;
   --confirmar-forte: #f0c419;
   --on-confirmar: #3a2c00;
+  --cancelada: #4a5468;
+  --cancelada-bg: #e3e6ec;
+  --cancelada-forte: #6b7487;
+  --on-cancelada: #ffffff;
   --shadow: 0 1px 2px rgba(8, 26, 61, .08), 0 10px 28px rgba(8, 26, 61, .10);
   --font-display: "Cinzel", "Trajan Pro", Georgia, "Times New Roman", serif;
   --font-text: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
@@ -49,7 +53,7 @@
     --bg: #06122b; --surface: #0c1e45; --ink: #eef2fa; --muted: #a2aec8; --line: #24376a; --line-soft: #182a55;
     --action: #d9b05c; --on-action: #081a3d; --accent-ink: #e6c477; --field: #0a1a3d; --focus: #9dbcff;
     --chip: #1b2e5e; --chip-ink: #cdd7ee; --crit: #ffa197; --crit-bg: #4a1613; --warn: #ffc874; --warn-bg: #3f2c07;
-    --ok: #7fdcaa; --ok-bg: #0f3626; --on-ok: #06122b; --pago-bg: #134a33; --devendo-bg: #5c1d19; --confirmar: #ffd95e; --confirmar-bg: #4d3f08; --confirmar-forte: #ffd95e; --on-confirmar: #2b2100;
+    --ok: #7fdcaa; --ok-bg: #0f3626; --on-ok: #06122b; --pago-bg: #134a33; --devendo-bg: #5c1d19; --confirmar: #ffd95e; --confirmar-bg: #4d3f08; --confirmar-forte: #ffd95e; --on-confirmar: #2b2100; --cancelada: #aab3c5; --cancelada-bg: #252d3f; --cancelada-forte: #8a93a6; --on-cancelada: #10151f;
     --shadow: 0 1px 2px rgba(0, 0, 0, .4), 0 10px 28px rgba(0, 0, 0, .35);
     color-scheme: dark;
   }
@@ -58,7 +62,7 @@
   --bg: #06122b; --surface: #0c1e45; --ink: #eef2fa; --muted: #a2aec8; --line: #24376a; --line-soft: #182a55;
   --action: #d9b05c; --on-action: #081a3d; --accent-ink: #e6c477; --field: #0a1a3d; --focus: #9dbcff;
   --chip: #1b2e5e; --chip-ink: #cdd7ee; --crit: #ffa197; --crit-bg: #4a1613; --warn: #ffc874; --warn-bg: #3f2c07;
-  --ok: #7fdcaa; --ok-bg: #0f3626; --on-ok: #06122b; --pago-bg: #134a33; --devendo-bg: #5c1d19; --confirmar: #ffd95e; --confirmar-bg: #4d3f08; --confirmar-forte: #ffd95e; --on-confirmar: #2b2100;
+  --ok: #7fdcaa; --ok-bg: #0f3626; --on-ok: #06122b; --pago-bg: #134a33; --devendo-bg: #5c1d19; --confirmar: #ffd95e; --confirmar-bg: #4d3f08; --confirmar-forte: #ffd95e; --on-confirmar: #2b2100; --cancelada: #aab3c5; --cancelada-bg: #252d3f; --cancelada-forte: #8a93a6; --on-cancelada: #10151f;
   --shadow: 0 1px 2px rgba(0, 0, 0, .4), 0 10px 28px rgba(0, 0, 0, .35);
   color-scheme: dark;
 }
@@ -106,6 +110,8 @@ button { -webkit-tap-highlight-color: transparent; }
 
 /* ---------- data e abas ---------- */
 .dateline { padding-block: 18px 8px; }
+.dateline-topo { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.dateline-topo h1 { min-width: 0; padding-top: 4px; }
 .dateline h1 {
   margin: 0; font-family: var(--font-display); font-weight: 600; font-size: clamp(19px, 5.4vw, 27px);
   line-height: 1.2; letter-spacing: .03em; text-wrap: balance;
@@ -216,7 +222,7 @@ textarea.in { min-height: 46vh; line-height: 1.5; resize: vertical; }
 .seg span { display: grid; place-items: center; min-height: 40px; padding: 4px 6px; border-radius: 9px; text-align: center; font-size: 14.5px; font-weight: 600; line-height: 1.2; color: var(--chip-ink); }
 .seg input:checked + span { background: var(--surface); color: var(--ink); box-shadow: var(--shadow); }
 .seg input:focus-visible + span { outline: 3px solid var(--focus); outline-offset: 1px; }
-.seg.seg-flex { display: flex; }
+.seg.seg-flex { display: flex; flex-wrap: wrap; }
 .seg.seg-flex label { flex: 1 1 auto; }
 .seg.seg-flex span { padding: 4px 8px; font-size: 14px; }
 .checkline { display: grid; grid-template-columns: 24px minmax(0, 1fr); gap: 10px; align-items: start; font-size: 14.5px; cursor: pointer; }
@@ -285,6 +291,22 @@ textarea.in { min-height: 46vh; line-height: 1.5; resize: vertical; }
 .sit.devendo { background: var(--crit); color: var(--surface); }
 .sit.confirmar { background: var(--confirmar-forte); color: var(--on-confirmar); }
 .sit[aria-pressed="true"] { border-color: var(--ink); }
+/* Audiências: verde on-line, amarelo presencial, cinza cancelada. */
+.row.is-faixa.online { background: var(--pago-bg); }
+.row.is-faixa.presencial { background: var(--confirmar-bg); }
+.row.is-faixa.cancelada { background: var(--cancelada-bg); }
+.row.is-faixa.indefinida { background: var(--chip); }
+.online .faixa { color: var(--ok); }
+.presencial .faixa { color: var(--confirmar); }
+.cancelada .faixa { color: var(--cancelada); }
+.online .status, .sit.online { background: var(--ok); color: var(--on-ok); }
+.presencial .status, .sit.presencial { background: var(--confirmar-forte); color: var(--on-confirmar); }
+.cancelada .status, .sit.cancelada { background: var(--cancelada-forte); color: var(--on-cancelada); }
+.indefinida .status { background: var(--chip-ink); color: var(--surface); }
+.cancelada .row-title { text-decoration: line-through; color: var(--cancelada); }
+#c-u-sit-online:checked + span { background: var(--ok); color: var(--on-ok); }
+#c-u-sit-presencial:checked + span { background: var(--confirmar-forte); color: var(--on-confirmar); }
+#c-u-sit-cancelada:checked + span { background: var(--cancelada-forte); color: var(--on-cancelada); }
 .status[disabled] { opacity: .55; }
 #c-a-pago-sim:checked + span { background: var(--ok); color: var(--on-ok); }
 #c-a-pago-nao:checked + span { background: var(--crit); color: var(--surface); }
@@ -351,7 +373,10 @@ textarea.in { min-height: 46vh; line-height: 1.5; resize: vertical; }
 
 <main class="wrap">
   <div class="dateline">
-    <h1 id="hoje-titulo">Agenda</h1>
+    <div class="dateline-topo">
+      <h1 id="hoje-titulo">Agenda</h1>
+      <button type="button" class="tab-add" id="add-btn" aria-label="Anotar item novo"><svg aria-hidden="true" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button>
+    </div>
     <p class="nota-dia" id="hoje-nota" hidden></p>
     <p class="sync" id="sync">Abrindo a agenda…</p>
     <p class="conta" id="aviso-conta" role="alert" hidden>Esta página não está aberta na conta dona da agenda. Aqui os itens não aparecem e nada é gravado. Entre no claude.ai com a conta que criou a agenda e abra o link de novo.</p>
@@ -362,8 +387,8 @@ textarea.in { min-height: 46vh; line-height: 1.5; resize: vertical; }
     <a class="tab" href="#semana" data-view="semana">Semana</a>
     <a class="tab" href="#prazos" data-view="prazos">Prazos</a>
     <a class="tab" href="#presidios" data-view="presidios">Presídios</a>
+    <a class="tab" href="#audiencias" data-view="audiencias">Audiências</a>
     <a class="tab" href="#notas" data-view="notas">Notas</a>
-    <button type="button" class="tab-add" id="add-btn" aria-label="Anotar item novo"><svg aria-hidden="true" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button>
   </nav>
 
   <div class="alerta" id="alerta" role="alert" hidden><span id="alerta-texto"></span><button type="button" id="alerta-fechar">Fechar</button></div>
@@ -379,6 +404,7 @@ textarea.in { min-height: 46vh; line-height: 1.5; resize: vertical; }
         <label><input type="radio" name="c-tipo" id="c-tipo-compromissos" value="compromissos"><span>Compromisso</span></label>
         <label><input type="radio" name="c-tipo" id="c-tipo-prazos" value="prazos"><span>Prazo</span></label>
         <label><input type="radio" name="c-tipo" id="c-tipo-agendamentos" value="agendamentos"><span>Presídio</span></label>
+        <label><input type="radio" name="c-tipo" id="c-tipo-audiencias" value="audiencias"><span>Audiência</span></label>
       </div>
 
       <div class="fields" id="f-tarefas">
@@ -413,6 +439,24 @@ textarea.in { min-height: 46vh; line-height: 1.5; resize: vertical; }
           </div>
         </div>
         <p class="form-aviso" id="c-a-aviso" role="status" hidden></p>
+      </div>
+
+      <div class="fields" id="f-audiencias" hidden>
+        <div class="field"><label for="c-u-nome">Nome</label><input class="in" id="c-u-nome" type="text" maxlength="200" autocomplete="off" autocapitalize="words"></div>
+        <div class="field"><label for="c-u-vara">Vara</label><input class="in" id="c-u-vara" type="text" maxlength="200" autocomplete="off" list="lista-varas"><datalist id="lista-varas"></datalist></div>
+        <div class="field"><label for="c-u-data">Data</label><input class="in" id="c-u-data" type="date"></div>
+        <div class="pair">
+          <div class="field"><label for="c-u-inicio">Das</label><input class="in hora-in" id="c-u-inicio" type="text" inputmode="numeric" autocomplete="off" placeholder="hh:mm"></div>
+          <div class="field"><label for="c-u-fim">Até <span class="opt">(opcional)</span></label><input class="in hora-in" id="c-u-fim" type="text" inputmode="numeric" autocomplete="off" placeholder="hh:mm"></div>
+        </div>
+        <div class="field">
+          <span class="rotulo" id="c-u-sit-rotulo">Como será</span>
+          <div class="seg" role="radiogroup" aria-labelledby="c-u-sit-rotulo">
+            <label><input type="radio" name="c-u-sit" id="c-u-sit-online" value="online"><span>On-line</span></label>
+            <label><input type="radio" name="c-u-sit" id="c-u-sit-presencial" value="presencial"><span>Presencial</span></label>
+            <label><input type="radio" name="c-u-sit" id="c-u-sit-cancelada" value="cancelada"><span>Cancelada</span></label>
+          </div>
+        </div>
       </div>
 
       <div class="fields" id="f-prazos" hidden>
@@ -469,6 +513,10 @@ textarea.in { min-height: 46vh; line-height: 1.5; resize: vertical; }
     <div class="sec">
       <div class="sec-head"><h2>Presídios</h2><button type="button" class="link-btn" id="hoje-pres-btn">Ver agendamentos</button></div>
       <div id="hoje-pres"></div>
+    </div>
+    <div class="sec">
+      <div class="sec-head"><h2>Audiências</h2><button type="button" class="link-btn" id="hoje-aud-btn">Ver audiências</button></div>
+      <div id="hoje-aud"></div>
     </div>
     <div class="sec">
       <div class="sec-head"><h2>Compromissos de hoje<span class="n" id="hoje-comps-n"></span></h2><button type="button" class="link-btn" id="hoje-comp-btn" aria-label="Anotar compromisso">Anotar</button></div>
@@ -538,6 +586,18 @@ textarea.in { min-height: 46vh; line-height: 1.5; resize: vertical; }
       <div id="pres-dia"></div>
       <div class="actions"><button type="button" class="btn btn-primary" id="pres-novo-btn">Agendar</button></div>
     </div>
+  </section>
+
+  <section class="view" id="view-audiencias" hidden>
+    <div class="sec">
+      <div class="sec-head"><h2>Próximas audiências<span class="n" id="aud-n"></span></h2></div>
+      <div id="aud-proximas"></div>
+      <div class="actions"><button type="button" class="btn btn-primary" id="aud-novo-btn">Registrar audiência</button></div>
+    </div>
+    <details class="fold">
+      <summary>Audiências anteriores <span class="n" id="aud-ant-n"></span></summary>
+      <div class="fold-body" id="aud-anteriores"></div>
+    </details>
   </section>
 
   <section class="view" id="view-notas" hidden>
@@ -780,8 +840,8 @@ textarea.in { min-height: 46vh; line-height: 1.5; resize: vertical; }
 (function () {
   "use strict";
   var P = window.Prazos;
-  var VIEWS = ["hoje", "semana", "prazos", "presidios", "notas"];
-  var NOME = { tarefas: "tarefa", compromissos: "compromisso", prazos: "prazo", agendamentos: "agendamento" };
+  var VIEWS = ["hoje", "semana", "prazos", "presidios", "audiencias", "notas"];
+  var NOME = { tarefas: "tarefa", compromissos: "compromisso", prazos: "prazo", agendamentos: "agendamento", audiencias: "audiência" };
   var PRINCIPAIS = ["tarefasPend", "tarefasFeitas", "compromissos", "prazosAbertos"];
   /* Presídios que já vêm na lista de escolha. Os acrescentados pelo Doutor ficam no grupo "presidios". */
   var PRESIDIOS = ["CPPL 1", "CPPL 2", "CPPL 3", "CPPL 4", "CPPL 5", "CPPL 6", "CPPL 7", "PACATUBA", "IPPOO II", "CTOC", "AQUIRAZ", "UPF", "IMELDA"];
@@ -791,10 +851,10 @@ textarea.in { min-height: 46vh; line-height: 1.5; resize: vertical; }
     hoje: P.hojeISO(), view: "hoje", db: null, semDados: false, negado: false, dono: null, donoSabido: false, notasExiste: null,
     atrasou: false, timerCarga: 0, lidoEm: null,
     tarefasPend: new Map(), tarefasFeitas: new Map(), compromissos: new Map(),
-    prazosAbertos: new Map(), prazosFeitos: new Map(), feriados: new Map(), agendamentos: new Map(), presidios: new Map(),
+    prazosAbertos: new Map(), prazosFeitos: new Map(), feriados: new Map(), agendamentos: new Map(), presidios: new Map(), audiencias: new Map(),
     semanaVista: "", diaSel: "", diaMostrado: "", presModo: "dia", presidiosChave: null,
     visto: {}, confirmado: {}, erroLeitura: {},
-    ocupado: new Set(), edit: null, fechando: false, confirmaPrazo: "", confirmaFeriado: "", escolheSituacao: ""
+    ocupado: new Set(), edit: null, fechando: false, confirmaPrazo: "", confirmaFeriado: "", escolheSituacao: "", escolheAud: "", varasChave: null
   };
   var N = { sujo: false, salvando: false, timer: 0, remoto: false, salvo: "", salvoEm: null, erro: "" };
 
@@ -865,12 +925,13 @@ textarea.in { min-height: 46vh; line-height: 1.5; resize: vertical; }
     assinar("prazosFeitos", db.collection("prazos").where("feito", "==", true).orderBy("data", "desc").limit(30), mapaDe(S.prazosFeitos));
     assinar("feriados", db.collection("feriados"), mapaDe(S.feriados));
     assinar("presidios", db.collection("presidios"), mapaDe(S.presidios));
+    assinar("audiencias", db.collection("audiencias").where("data", ">=", P.addDias(S.hoje, -60)), mapaDe(S.audiencias));
     assinar("agendamentos", db.collection("agendamentos").where("data", ">=", P.addDias(P.inicioSemana(S.hoje), -56)), mapaDe(S.agendamentos));
     assinar("notas", db.doc("notas/texto"), aplicarNotas);
   }
   function conferirCarga() {
     conferirAcesso();
-    var nomes = PRINCIPAIS.concat(["prazosFeitos", "feriados", "notas", "agendamentos", "presidios"]);
+    var nomes = PRINCIPAIS.concat(["prazosFeitos", "feriados", "notas", "agendamentos", "presidios", "audiencias"]);
     if (nomes.every(function (n) { return S.confirmado[n] || S.erroLeitura[n]; })) { clearTimeout(S.timerCarga); S.atrasou = false; }
   }
   /* Só a conta dona lê os dados. Se a plataforma não disser quem é o dono, o documento de notas serve de prova:
@@ -1003,6 +1064,23 @@ textarea.in { min-height: 46vh; line-height: 1.5; resize: vertical; }
   function contarAgendamentos(de, ate) {
     var n = 0;
     S.agendamentos.forEach(function (v) { if (P.isISO(v.data) && v.data >= de && v.data <= ate) n++; });
+    return n;
+  }
+  /* Audiências: "online" (verde), "presencial" (amarelo) ou "cancelada" (cinza). */
+  var AUD_SITUACOES = [["online", "On-line"], ["presencial", "Presencial"], ["cancelada", "Cancelada"]];
+  function lerAud(v) { return v.situacao === "online" || v.situacao === "presencial" || v.situacao === "cancelada" ? v.situacao : ""; }
+  function rotuloAud(x) { return x === "online" ? "On-line" : x === "presencial" ? "Presencial" : x === "cancelada" ? "Cancelada" : "A definir"; }
+  function listaAudiencias() {
+    var out = [];
+    S.audiencias.forEach(function (v, id) {
+      out.push({ id: id, nome: str(v.nome), vara: str(v.vara), data: P.isISO(v.data) ? v.data : "", inicio: horaValida(v.inicio), fim: horaValida(v.fim), situacao: lerAud(v) });
+    });
+    return out;
+  }
+  /* Audiência cancelada não entra na contagem do dia nem da semana. */
+  function contarAudiencias(de, ate) {
+    var n = 0;
+    S.audiencias.forEach(function (v) { if (P.isISO(v.data) && v.data >= de && v.data <= ate && v.situacao !== "cancelada") n++; });
     return n;
   }
   function tarefasDeHoje() {
@@ -1164,6 +1242,39 @@ textarea.in { min-height: 46vh; line-height: 1.5; resize: vertical; }
     S.diaSel = dia || "";
     irPara("presidios");
   }
+  /* Fora da aba Audiências aparece só a quantidade. */
+  function linhaAudiencias(n) {
+    return h("li", { class: "row is-plain" },
+      h("button", { type: "button", class: "row-main", onclick: function () { irPara("audiencias"); } },
+        h("span", { class: "row-title", text: P.plural(n, "audiência") })),
+      h("span", { class: "chip", text: "ver" }));
+  }
+  function definirAud(a, situacao) {
+    var caminho = "audiencias/" + a.id;
+    S.escolheAud = "";
+    if (situacao === a.situacao) { pedirRender(); return; }
+    gravar(caminho, function () { return S.db.doc(caminho).update({ situacao: situacao }); }, "Audiência marcada como " + rotuloAud(situacao).toLowerCase() + ".");
+  }
+  /* Mesma aparência da linha dos presídios: horário à esquerda, nome e vara, e a etiqueta com on-line, presencial ou cancelada. */
+  function linhaAudiencia(a) {
+    var rotulo = rotuloAud(a.situacao), aberto = S.escolheAud === a.id;
+    var li = h("li", { class: "row is-faixa " + (a.situacao || "indefinida") },
+      h("span", { class: "faixa" }, h("b", { text: P.fmtHora(a.inicio) || "sem hora" }), a.fim ? h("span", { text: "até " + P.fmtHora(a.fim) }) : null),
+      h("button", { type: "button", class: "row-main", onclick: function () { abrirEdicao("audiencias", a.id); } },
+        h("span", { class: "row-title", text: a.nome || "(sem nome)" }),
+        h("span", { class: "row-meta" }, h("span", { text: a.vara || "vara não informada" }))),
+      h("button", {
+        type: "button", class: "status", "aria-expanded": String(aberto), disabled: S.ocupado.has("audiencias/" + a.id),
+        "aria-label": "Audiência de " + a.nome + ": " + rotulo.toLowerCase() + ". Tocar para trocar", text: rotulo,
+        onclick: function () { S.escolheAud = aberto ? "" : a.id; pedirRender(); }
+      }));
+    if (aberto) {
+      li.append(h("div", { class: "situacoes" }, AUD_SITUACOES.map(function (par) {
+        return h("button", { type: "button", class: "sit " + par[0], "aria-pressed": String(a.situacao === par[0]), text: par[1], onclick: function () { definirAud(a, par[0]); } });
+      })));
+    }
+    return li;
+  }
   function listaOuVazio(linhas, vazio) {
     return linhas.length ? h("ul", { class: "rows" }, linhas) : h("p", { class: "empty", text: vazio });
   }
@@ -1238,6 +1349,19 @@ textarea.in { min-height: 46vh; line-height: 1.5; resize: vertical; }
       if (nDepois) box.append(h("p", { class: "note", text: "Depois desta semana: " + P.plural(nDepois, "agendamento") + "." }));
     }
 
+    box = $("hoje-aud"); box.replaceChildren();
+    sit = situacao(["audiencias"]);
+    if (sit !== "ok") box.append(avisoCarga(sit, "as audiências"));
+    else {
+      var iniA = P.inicioSemana(hoje), ultA = P.addDias(iniA, 6), nAudDepois = contarAudiencias(P.addDias(ultA, 1), "9999-12-31");
+      box.append(h("div", { class: "stats" },
+        h("button", { type: "button", class: "stat", onclick: function () { irPara("audiencias"); } },
+          h("span", { class: "stat-n", text: String(contarAudiencias(hoje, hoje)) }), h("span", { class: "stat-l", text: "hoje" })),
+        h("button", { type: "button", class: "stat", onclick: function () { irPara("audiencias"); } },
+          h("span", { class: "stat-n", text: String(contarAudiencias(iniA, ultA)) }), h("span", { class: "stat-l", text: "nesta semana, de " + P.fmtDiaMes(iniA) + " a " + P.fmtDiaMes(ultA) }))));
+      if (nAudDepois) box.append(h("p", { class: "note", text: "Depois desta semana: " + P.plural(nAudDepois, "audiência") + "." }));
+    }
+
     box = $("hoje-comps"); box.replaceChildren(); $("hoje-comps-n").textContent = "";
     sit = situacao(["compromissos"]);
     if (sit !== "ok") box.append(avisoCarga(sit, "os compromissos"));
@@ -1264,7 +1388,7 @@ textarea.in { min-height: 46vh; line-height: 1.5; resize: vertical; }
     btn.setAttribute("aria-expanded", String(S.fechando));
     btn.textContent = S.fechando ? "Ocultar o fechamento" : "Fechar o dia";
     if (!S.fechando) return;
-    var sit = situacao(PRINCIPAIS.concat(["agendamentos"]));
+    var sit = situacao(PRINCIPAIS.concat(["agendamentos", "audiencias"]));
     if (sit !== "ok") { box.append(avisoCarga(sit, "a agenda")); return; }
     var hoje = S.hoje, amanha = P.addDias(hoje, 1), tarefas = listaTarefas(), abertos = listaPrazos(S.prazosAbertos);
     var feito = listaPrazos(S.prazosFeitos).filter(function (p) { return p.data === hoje; }).map(linhaPrazo)
@@ -1272,7 +1396,8 @@ textarea.in { min-height: 46vh; line-height: 1.5; resize: vertical; }
     var pend = abertos.filter(function (p) { return !p.data || p.data <= hoje; }).sort(porData).map(linhaPrazo)
       .concat(tarefas.filter(function (t) { return !t.feita && (!t.data || t.data <= hoje); }).sort(porData).map(linhaTarefa));
     var nAmanha = contarAgendamentos(amanha, amanha);
-    var am = (nAmanha ? [linhaPresidios(amanha, nAmanha)] : []).concat(abertos.filter(function (p) { return p.data === amanha; }).map(linhaPrazo))
+    var nAudAmanha = contarAudiencias(amanha, amanha);
+    var am = (nAmanha ? [linhaPresidios(amanha, nAmanha)] : []).concat(nAudAmanha ? [linhaAudiencias(nAudAmanha)] : []).concat(abertos.filter(function (p) { return p.data === amanha; }).map(linhaPrazo))
       .concat(listaCompromissos().filter(function (c) { return c.data === amanha; }).sort(porHora).map(linhaCompromisso))
       .concat(tarefas.filter(function (t) { return t.data === amanha; }).map(linhaTarefa));
     box.append(
@@ -1290,7 +1415,7 @@ textarea.in { min-height: 46vh; line-height: 1.5; resize: vertical; }
   function renderSemana() {
     var box = $("semana-box");
     box.replaceChildren();
-    var sit = situacao(PRINCIPAIS.concat(["agendamentos"]));
+    var sit = situacao(PRINCIPAIS.concat(["agendamentos", "audiencias"]));
     if (sit !== "ok") { box.append(avisoCarga(sit, "a semana")); return; }
     var hoje = S.hoje, tarefas = listaTarefas(), comps = listaCompromissos(), prazos = listaPrazos(S.prazosAbertos), ex = extras();
     var atraso = prazos.filter(function (p) { return !p.data || p.data < hoje; }).sort(porData).map(linhaPrazo)
@@ -1299,7 +1424,8 @@ textarea.in { min-height: 46vh; line-height: 1.5; resize: vertical; }
     for (var i = 0; i < 7; i++) {
       var dia = P.addDias(hoje, i), m = P.motivoSemExpediente(dia, ex);
       var nPres = contarAgendamentos(dia, dia);
-      var linhas = (nPres ? [linhaPresidios(dia, nPres)] : []).concat(prazos.filter(function (p) { return p.data === dia; }).map(linhaPrazo))
+      var nAud = contarAudiencias(dia, dia);
+      var linhas = (nPres ? [linhaPresidios(dia, nPres)] : []).concat(nAud ? [linhaAudiencias(nAud)] : []).concat(prazos.filter(function (p) { return p.data === dia; }).map(linhaPrazo))
         .concat(comps.filter(function (c) { return c.data === dia; }).sort(porHora).map(linhaCompromisso))
         .concat(tarefas.filter(function (t) { return t.data === dia; }).sort(function (a, b) { return (a.feita - b.feita) || cmpTexto(a.texto, b.texto); }).map(linhaTarefa));
       box.append(blocoDia((i === 0 ? "Hoje · " : i === 1 ? "Amanhã · " : "") + P.fmtLonga(dia), m && m !== "sábado" && m !== "domingo" ? m : "", linhas, "Nada marcado.", true));
@@ -1480,6 +1606,51 @@ textarea.in { min-height: 46vh; line-height: 1.5; resize: vertical; }
     el.hidden = !msg;
   }
 
+  /* ---------- Audiências ---------- */
+  function tituloDoDia(dia) {
+    if (!dia) return "Sem data";
+    return cap(P.fmtLonga(dia)) + (dia.slice(0, 4) !== S.hoje.slice(0, 4) ? " de " + dia.slice(0, 4) : "") +
+      (dia === S.hoje ? " · hoje" : dia === P.addDias(S.hoje, 1) ? " · amanhã" : "");
+  }
+  /* Devolve, dia por dia, o título do dia e as linhas das audiências. */
+  function gruposDeAudiencias(lista, maisRecentePrimeiro) {
+    var porDia = {}, nos = [], dias;
+    lista.forEach(function (a) { (porDia[a.data] = porDia[a.data] || []).push(a); });
+    dias = Object.keys(porDia).sort();
+    if (maisRecentePrimeiro) dias.reverse();
+    dias.forEach(function (dia) {
+      var doDia = porDia[dia].sort(porInicio);
+      nos.push(h("h3", { class: "sub-head" }, tituloDoDia(dia), h("span", { class: "n", text: String(doDia.length) })), h("ul", { class: "rows" }, doDia.map(linhaAudiencia)));
+    });
+    return nos;
+  }
+  function renderAudiencias() {
+    var box = $("aud-proximas"), boxA = $("aud-anteriores"), sit = situacao(["audiencias"]), hoje = S.hoje;
+    box.replaceChildren(); boxA.replaceChildren();
+    $("aud-n").textContent = ""; $("aud-ant-n").textContent = "";
+    $("aud-novo-btn").hidden = sit !== "ok";
+    if (sit !== "ok") { box.append(avisoCarga(sit, "as audiências")); return; }
+    var todas = listaAudiencias();
+    var proximas = todas.filter(function (a) { return !a.data || a.data >= hoje; });
+    var anteriores = todas.filter(function (a) { return a.data && a.data < hoje; });
+    var ativas = proximas.filter(function (a) { return a.situacao !== "cancelada"; }).length;
+    if (ativas) $("aud-n").textContent = ativas;
+    if (proximas.length) gruposDeAudiencias(proximas, false).forEach(function (n) { box.append(n); });
+    else box.append(h("p", { class: "empty", text: "Nenhuma audiência registrada de hoje em diante. Use “Registrar audiência” para lançar a primeira." }));
+    $("aud-ant-n").textContent = "(" + anteriores.length + ")";
+    if (anteriores.length) gruposDeAudiencias(anteriores, true).forEach(function (n) { boxA.append(n); });
+    else boxA.append(h("p", { class: "empty", text: "Nenhuma audiência nos últimos 60 dias." }));
+  }
+  /* Sugestões de vara no formulário: as varas já usadas nas audiências carregadas. */
+  function atualizarVaras() {
+    var nomes = {}, lista, chave;
+    S.audiencias.forEach(function (v) { var n = str(v.vara).trim(); if (n) nomes[n] = true; });
+    lista = Object.keys(nomes).sort(cmpTexto); chave = lista.join("|");
+    if (chave === S.varasChave) return;
+    S.varasChave = chave;
+    $("lista-varas").replaceChildren.apply($("lista-varas"), lista.map(function (n) { return h("option", { value: n }); }));
+  }
+
   /* ---------- Notas ---------- */
   function aplicarNotas(snap) {
     var campo = $("notas-texto"), texto = snap.exists ? str((snap.data() || {}).texto) : "";
@@ -1560,12 +1731,13 @@ textarea.in { min-height: 46vh; line-height: 1.5; resize: vertical; }
     $("f-compromissos").hidden = col !== "compromissos";
     $("f-prazos").hidden = col !== "prazos";
     $("f-agendamentos").hidden = col !== "agendamentos";
+    $("f-audiencias").hidden = col !== "audiencias";
     $("c-a-novo-campo").hidden = $("c-a-presidio").value !== NOVO;
     $("c-p-modos").hidden = editando;
     $("f-prazo-calc").hidden = manual;
     $("f-prazo-manual").hidden = !manual;
     $("compose-titulo").textContent = editando ? "Editar " + NOME[col] : "Anotar";
-    $("compose-salvar").textContent = editando ? "Salvar alterações" : col === "tarefas" ? "Anotar tarefa" : col === "compromissos" ? "Anotar compromisso" : col === "agendamentos" ? "Agendar" : "Gravar prazo";
+    $("compose-salvar").textContent = editando ? "Salvar alterações" : col === "tarefas" ? "Anotar tarefa" : col === "compromissos" ? "Anotar compromisso" : col === "agendamentos" ? "Agendar" : col === "audiencias" ? "Registrar audiência" : "Gravar prazo";
     $("compose-excluir").hidden = !editando;
     $("compose-confirma").hidden = true;
     erroCompose("");
@@ -1589,12 +1761,13 @@ textarea.in { min-height: 46vh; line-height: 1.5; resize: vertical; }
     $("c-a-data").value = S.view === "presidios" && S.diaMostrado ? S.diaMostrado : S.hoje;
     $("c-a-fim").dataset.auto = "";
     ajustarCompose();
-    mostrarCompose(col === "tarefas" ? "c-t-texto" : col === "compromissos" ? "c-c-titulo" : col === "agendamentos" ? "c-a-nome" : null);
+    mostrarCompose(col === "tarefas" ? "c-t-texto" : col === "compromissos" ? "c-c-titulo" : col === "agendamentos" ? "c-a-nome" : col === "audiencias" ? "c-u-nome" : null);
   }
   function abrirEdicao(col, id) {
     var v = col === "tarefas" ? (S.tarefasPend.get(id) || S.tarefasFeitas.get(id))
       : col === "compromissos" ? S.compromissos.get(id)
       : col === "agendamentos" ? S.agendamentos.get(id)
+      : col === "audiencias" ? S.audiencias.get(id)
       : (S.prazosAbertos.get(id) || S.prazosFeitos.get(id));
     if (!v) { alerta("Este item não está mais na agenda."); return; }
     S.edit = { col: col, id: id };
@@ -1607,6 +1780,10 @@ textarea.in { min-height: 46vh; line-height: 1.5; resize: vertical; }
       $("c-a-nome").value = str(v.nome); escolherPresidio(v.presidio); $("c-a-data").value = P.isISO(v.data) ? v.data : "";
       $("c-a-inicio").value = horaValida(v.inicio); $("c-a-fim").value = horaValida(v.fim); $("c-a-fim").dataset.auto = "";
       $({ pago: "c-a-pago-sim", a_confirmar: "c-a-pago-confirmar", nao_pago: "c-a-pago-nao" }[lerSituacao(v)]).checked = true;
+    } else if (col === "audiencias") {
+      $("c-u-nome").value = str(v.nome); $("c-u-vara").value = str(v.vara); $("c-u-data").value = P.isISO(v.data) ? v.data : "";
+      $("c-u-inicio").value = horaValida(v.inicio); $("c-u-fim").value = horaValida(v.fim);
+      if (lerAud(v)) $("c-u-sit-" + lerAud(v)).checked = true;
     } else { $("c-p-titulo").value = str(v.titulo); $("c-p-data").value = P.isISO(v.data) ? v.data : ""; }
     ajustarCompose();
     mostrarCompose(null);
@@ -1625,6 +1802,18 @@ textarea.in { min-height: 46vh; line-height: 1.5; resize: vertical; }
       else if (!P.isISO(dados.data)) erro = "Informe a data do compromisso.";
       else if (dados.hora && !horaValida(dados.hora)) erro = "Hora incompleta ou inválida. Digite as horas e os minutos, como 1430, ou deixe em branco.";
       else ok = "Compromisso anotado para " + quando(dados.data) + (dados.hora ? ", às " + dados.hora : "") + ".";
+    } else if (col === "audiencias") {
+      var marcada = document.querySelector('input[name="c-u-sit"]:checked');
+      dados = { nome: val("c-u-nome"), vara: val("c-u-vara"), data: val("c-u-data"), inicio: val("c-u-inicio").slice(0, 5), fim: val("c-u-fim").slice(0, 5), situacao: marcada ? marcada.value : "" };
+      if (!dados.nome) erro = "Escreva o nome.";
+      else if (!dados.vara) erro = "Informe a vara.";
+      else if (!P.isISO(dados.data)) erro = "Informe a data da audiência.";
+      else if (!dados.inicio) erro = "Informe o horário da audiência.";
+      else if (!horaValida(dados.inicio)) erro = "Horário incompleto ou inválido. Digite as horas e os minutos, como 0930.";
+      else if (dados.fim && !horaValida(dados.fim)) erro = "Horário final incompleto ou inválido. Digite as horas e os minutos, como 1030, ou deixe em branco.";
+      else if (dados.fim && dados.fim <= dados.inicio) erro = "O horário final precisa ser depois do início.";
+      else if (!dados.situacao) erro = "Escolha se a audiência será on-line ou presencial.";
+      else ok = "Audiência registrada: " + dados.nome + ", " + quando(dados.data) + ", " + P.fmtFaixa(dados.inicio, dados.fim) + ", " + rotuloAud(dados.situacao).toLowerCase() + ".";
     } else if (col === "agendamentos") {
       var escolha = $("c-a-presidio").value, digitado = val("c-a-presidio-novo").replace(/\s+/g, " "), igual;
       dados = { nome: val("c-a-nome"), data: val("c-a-data"), inicio: val("c-a-inicio").slice(0, 5), fim: val("c-a-fim").slice(0, 5), presidio: escolha === NOVO ? digitado : escolha, situacao: document.querySelector('input[name="c-a-pago"]:checked').value };
@@ -1680,6 +1869,7 @@ textarea.in { min-height: 46vh; line-height: 1.5; resize: vertical; }
       if (!deu) return;
       fecharCompose();
       if (!editando && col === "prazos") irPara("prazos");
+      if (!editando && col === "audiencias") irPara("audiencias");
       if (col === "agendamentos") {
         if (presidioNovo) guardarPresidio(presidioNovo);
         S.semanaVista = P.inicioSemana(dados.data) !== P.inicioSemana(S.hoje) ? P.inicioSemana(dados.data) : "";
@@ -1721,8 +1911,10 @@ textarea.in { min-height: 46vh; line-height: 1.5; resize: vertical; }
     else if (S.view === "semana") renderSemana();
     else if (S.view === "prazos") renderPrazos();
     else if (S.view === "presidios") renderPresidios();
+    else if (S.view === "audiencias") renderAudiencias();
     else renderNotas();
     atualizarPresidios();
+    atualizarVaras();
     if (!$("compose").hidden && !S.edit && tipoMarcado() === "prazos" && $("c-p-modo-calc").checked) atualizarCalc();
   }
   function conferirDia() {
@@ -1762,7 +1954,11 @@ textarea.in { min-height: 46vh; line-height: 1.5; resize: vertical; }
       a.addEventListener("click", function (ev) { ev.preventDefault(); irPara(a.getAttribute("data-view")); });
     });
     window.addEventListener("hashchange", function () { var v = lerHash(); if (v !== S.view) mostrar(v); });
-    $("add-btn").addEventListener("click", function () { abrirNovo(S.view === "prazos" ? "prazos" : S.view === "presidios" ? "agendamentos" : "tarefas"); });
+    $("add-btn").addEventListener("click", function () { abrirNovo(S.view === "prazos" ? "prazos" : S.view === "presidios" ? "agendamentos" : S.view === "audiencias" ? "audiencias" : "tarefas"); });
+    $("hoje-aud-btn").addEventListener("click", function () { irPara("audiencias"); });
+    $("aud-novo-btn").addEventListener("click", function () { abrirNovo("audiencias"); });
+    ligarHora("c-u-inicio");
+    ligarHora("c-u-fim");
     $("hoje-pres-btn").addEventListener("click", function () { verPresidios(""); });
     $("pres-novo-btn").addEventListener("click", function () { abrirNovo("agendamentos"); });
     ligarHora("c-c-hora");
