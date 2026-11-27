@@ -2,7 +2,7 @@
 
 Uma agenda do dia a dia inteligente.
 
-Código da página **Agenda Dr. Ulysses**: tarefas, compromissos, prazos processuais penais (com cálculo a partir da publicação), agendamentos nos presídios e notas. A página é privada e os dados ficam no banco de dados dela, não neste repositório.
+Código da página **Agenda Dr. Ulysses**: tarefas, compromissos, prazos processuais penais (com cálculo a partir da publicação), agendamentos nos presídios, audiências e notas. A página é privada e os dados ficam no banco de dados dela, não neste repositório.
 
 - `agenda.html`: a página
 - `logo.webp`: a logo
